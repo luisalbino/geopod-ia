@@ -1,18 +1,23 @@
 package com.application.views;
 
+import com.application.services.security.SecurityService;
 import com.application.views.about.AboutView;
 import com.application.views.helloworld.HelloWorldView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import org.springframework.data.convert.DtoInstantiatingConverter;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
 /**
@@ -21,8 +26,11 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 public class MainLayout extends AppLayout {
 
     private H2 viewTitle;
+    private final SecurityService securityService;
 
-    public MainLayout() {
+    public MainLayout(SecurityService securityService) {
+        this.securityService = securityService;
+
         setPrimarySection(Section.DRAWER);
         addDrawerContent();
         addHeaderContent();
@@ -32,10 +40,21 @@ public class MainLayout extends AppLayout {
         DrawerToggle toggle = new DrawerToggle();
         toggle.setAriaLabel("Menu toggle");
 
+
         viewTitle = new H2();
         viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
 
-        addToNavbar(true, toggle, viewTitle);
+        var logOutButton = new Button("LogOut");
+        logOutButton.addClickListener(event -> this.securityService.logout());
+
+        var titleLayout = new HorizontalLayout();
+        titleLayout.getStyle().set("margin", "0 10px 0 10px");
+        titleLayout.setSizeFull();
+        titleLayout.add(viewTitle, logOutButton);
+        titleLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        titleLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+
+        addToNavbar(true, toggle, titleLayout);
     }
 
     private void addDrawerContent() {

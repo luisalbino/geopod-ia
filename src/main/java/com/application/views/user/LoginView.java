@@ -1,7 +1,7 @@
 package com.application.views.user;
 
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.login.LoginI18n;
+import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -13,7 +13,8 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 @AnonymousAllowed
 @PageTitle("Login")
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
-    private final LoginForm login = new LoginForm();
+
+    private LoginOverlay login;
 
     public LoginView() {
         setSizeFull();
@@ -21,10 +22,31 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
-        login.setAction("login");
-        login.setForgotPasswordButtonVisible(false);
+        createLoginForm();
+    }
 
-        add(new H1("GEOPod.IA"), login);
+    private void createLoginForm() {
+        LoginI18n configuration = LoginI18n.createDefault();
+
+        LoginI18n.Header header = new LoginI18n.Header();
+        header.setTitle("GEOPod.IA");
+        header.setDescription("");
+        configuration.setHeader(header);
+
+        LoginI18n.Form form = configuration.getForm();
+        form.setTitle(null);
+        form.setUsername("Username");
+        form.setPassword("Senha");
+        form.setSubmit("Entrar");
+        configuration.setForm(form);
+
+        login = new LoginOverlay();
+        login.setI18n(configuration);
+        login.setForgotPasswordButtonVisible(false);
+        login.setAction("login");
+        login.setOpened(true);
+
+        add(login);
     }
 
     @Override
