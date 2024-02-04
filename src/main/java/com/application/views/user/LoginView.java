@@ -35,7 +35,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
         LoginI18n.Form form = configuration.getForm();
         form.setTitle(null);
-        form.setUsername("Username");
+        form.setUsername("Usuário");
         form.setPassword("Senha");
         form.setSubmit("Entrar");
         configuration.setForm(form);
