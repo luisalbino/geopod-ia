@@ -1,5 +1,6 @@
 package com.application.views.user;
 
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -8,6 +9,11 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import de.f0rce.ace.AceEditor;
+import de.f0rce.ace.enums.AceMode;
+import de.f0rce.ace.enums.AceTheme;
+
+import java.util.Arrays;
 
 @Route("login")
 @AnonymousAllowed
