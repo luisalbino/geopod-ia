@@ -1,7 +1,7 @@
 package com.application.views;
 
 import com.application.services.security.SecurityService;
-import com.application.views.helloworld.HelloWorldView;
+import com.application.views.importador.cadastros.PerfilCadastroView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -9,7 +9,6 @@ import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
@@ -74,13 +73,13 @@ public class MainLayout extends AppLayout {
 
     private SideNavItem getImportadorSQL() {
         SideNavItem importadorSQL = new SideNavItem("Importador de SQL`s");
-        importadorSQL.addItem(new SideNavItem("SQL", HelloWorldView.class));
+        importadorSQL.addItem(new SideNavItem("SQL", PerfilCadastroView.class));
 
         SideNavItem cadastros = new SideNavItem("Cadastros");
-        cadastros.addItem(new SideNavItem("Perfis", HelloWorldView.class));
-        cadastros.addItem(new SideNavItem("ERP`s", HelloWorldView.class));
-        cadastros.addItem(new SideNavItem("Ramos", HelloWorldView.class));
-        cadastros.addItem(new SideNavItem("Banco de dados", HelloWorldView.class));
+        cadastros.addItem(new SideNavItem("Perfis", PerfilCadastroView.class));
+        cadastros.addItem(new SideNavItem("ERP`s", PerfilCadastroView.class));
+        cadastros.addItem(new SideNavItem("Ramos", PerfilCadastroView.class));
+        cadastros.addItem(new SideNavItem("Banco de dados", PerfilCadastroView.class));
 
         importadorSQL.addItem(cadastros);
 
