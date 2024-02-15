@@ -10,9 +10,9 @@ import jakarta.annotation.security.PermitAll;
 @PermitAll
 @PageTitle("Importador SQL - Cadastro perfil")
 @Route(value = "", layout = MainLayout.class)
-public class PerfilCadastroView extends VerticalLayout {
+public class CadastroPerfilView extends VerticalLayout {
 
-    public PerfilCadastroView() {
+    public CadastroPerfilView() {
         add(new Span("Cadastro de perfil"));
     }
 }

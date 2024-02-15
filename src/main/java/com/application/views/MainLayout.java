@@ -1,7 +1,7 @@
 package com.application.views;
 
 import com.application.services.security.SecurityService;
-import com.application.views.importador.cadastros.PerfilCadastroView;
+import com.application.views.importador.cadastros.CadastroPerfilView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -73,13 +73,13 @@ public class MainLayout extends AppLayout {
 
     private SideNavItem getImportadorSQL() {
         SideNavItem importadorSQL = new SideNavItem("Importador de SQL`s");
-        importadorSQL.addItem(new SideNavItem("SQL", PerfilCadastroView.class));
+        importadorSQL.addItem(new SideNavItem("SQL", CadastroPerfilView.class));
 
         SideNavItem cadastros = new SideNavItem("Cadastros");
-        cadastros.addItem(new SideNavItem("Perfis", PerfilCadastroView.class));
-        cadastros.addItem(new SideNavItem("ERP`s", PerfilCadastroView.class));
-        cadastros.addItem(new SideNavItem("Ramos", PerfilCadastroView.class));
-        cadastros.addItem(new SideNavItem("Banco de dados", PerfilCadastroView.class));
+        cadastros.addItem(new SideNavItem("Perfis", CadastroPerfilView.class));
+        cadastros.addItem(new SideNavItem("ERP`s", CadastroPerfilView.class));
+        cadastros.addItem(new SideNavItem("Ramos", CadastroPerfilView.class));
+        cadastros.addItem(new SideNavItem("Banco de dados", CadastroPerfilView.class));
 
         importadorSQL.addItem(cadastros);
 
