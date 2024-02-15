@@ -1,6 +1,5 @@
 package com.application.views.user;
 
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -9,11 +8,6 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import de.f0rce.ace.AceEditor;
-import de.f0rce.ace.enums.AceMode;
-import de.f0rce.ace.enums.AceTheme;
-
-import java.util.Arrays;
 
 @Route("login")
 @AnonymousAllowed
@@ -28,31 +22,31 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
-        createLoginForm();
+        createLoginFormulario();
     }
 
-    private void createLoginForm() {
-        LoginI18n configuration = LoginI18n.createDefault();
+    private void createLoginFormulario() {
+        LoginI18n configuracao = LoginI18n.createDefault();
 
-        LoginI18n.Header header = new LoginI18n.Header();
-        header.setTitle("GEOPod.IA");
-        header.setDescription("");
-        configuration.setHeader(header);
+        LoginI18n.Header cabecalho = new LoginI18n.Header();
+        cabecalho.setTitle("GEOPod.IA");
+        cabecalho.setDescription("");
+        configuracao.setHeader(cabecalho);
 
-        LoginI18n.Form form = new LoginI18n.Form();
-        form.setTitle(null);
-        form.setUsername("Usuário");
-        form.setPassword("Senha");
-        form.setSubmit("Entrar");
-        configuration.setForm(form);
+        LoginI18n.Form formulario = new LoginI18n.Form();
+        formulario.setTitle(null);
+        formulario.setUsername("Usuário");
+        formulario.setPassword("Senha");
+        formulario.setSubmit("Entrar");
+        configuracao.setForm(formulario);
 
         LoginI18n.ErrorMessage error = new LoginI18n.ErrorMessage();
         error.setTitle("Usuário/Senha incorretos");
         error.setMessage("Valide se todos os dados estão corretos!");
-        configuration.setErrorMessage(error);
+        configuracao.setErrorMessage(error);
 
         login = new LoginOverlay();
-        login.setI18n(configuration);
+        login.setI18n(configuracao);
         login.setForgotPasswordButtonVisible(false);
         login.setAction("login");
         login.setOpened(true);
