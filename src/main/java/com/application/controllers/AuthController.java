@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     @PostMapping("/auth")
     public String login(@RequestBody Object request) {
+
         String token = JwtHelper.generateToken("admin");
         return token;
     }

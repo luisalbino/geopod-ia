@@ -15,6 +15,7 @@ import java.util.Date;
 public class JwtHelper {
 
     public static String generateToken(String username) {
+
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
 
@@ -22,17 +23,15 @@ public class JwtHelper {
         byte[] apiKeySecretBytes = Base64.getEncoder().encode(secretString.getBytes());
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(new Date(nowMillis + 3600000)) // expira em 1 hora
                 .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
-
-        System.out.println("JWT Token: " + token);
-
-        return token;
     }
+
+
     /*
     public static String extractUsername(String token) {
         return Jwts.parser()
