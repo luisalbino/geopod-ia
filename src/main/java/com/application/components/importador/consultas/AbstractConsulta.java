@@ -11,27 +11,35 @@ import java.util.Collection;
 
 public abstract class AbstractConsulta<S extends AbstractService<E, ?>, E extends ImportadorEntity> extends VerticalLayout {
 
+    private final S service;
     private Collection<E> dados;
+    private final Grid<E> grid = new Grid<>();
+    private final ComboBox<E> campoFiltroDescricao = new ComboBox<>("Filtro");
 
     protected AbstractConsulta(S service) {
-        this.dados = service.getAll();
+        this.service = service;
+        this.dados = this.service.getAll();
 
-        add(getFiltros(), getTabelaDados());
+        configFiltros();
+        configTabelaDados();
     }
 
-    private Component getFiltros() {
-        var campoFiltroDescricao = new ComboBox<E>();
+    private void configFiltros() {
         campoFiltroDescricao.setItems(this.dados);
-
-        return campoFiltroDescricao;
+        add(campoFiltroDescricao);
     }
 
-    private Component getTabelaDados() {
-        var grid = new Grid<E>();
+    private void configTabelaDados() {
         grid.addColumn(E::getId).setHeader("Id");
         grid.addColumn(E::getDescricao).setHeader("Descrição");
-        grid.setItems(dados);
+        grid.setItems(this.dados);
+        add(grid);
+    }
 
-        return grid;
+    public void atualizarDados() {
+        this.dados = this.service.getAll();
+
+        this.grid.setItems(this.dados);
+        this.campoFiltroDescricao.setItems(this.dados);
     }
 }

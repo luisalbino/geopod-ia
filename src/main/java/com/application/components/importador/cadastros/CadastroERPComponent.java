@@ -5,7 +5,7 @@ import com.application.services.importador.ERPService;
 
 public class CadastroERPComponent extends AbstractCadastro<ERPService, ERPEntity> {
 
-    public CadastroERPComponent(ERPService service) {
-        super(service, ERPEntity::new);
+    public CadastroERPComponent(ERPService service, Runnable afterSave) {
+        super(service, ERPEntity::new, afterSave);
     }
 }

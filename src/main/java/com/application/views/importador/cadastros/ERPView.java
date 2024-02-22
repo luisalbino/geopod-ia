@@ -17,8 +17,11 @@ public class ERPView extends SplitLayout {
     public ERPView(ERPService service) {
         super();
 
+        var consulta = new ConsultaERPComponent(service);
+        var cadastro = new CadastroERPComponent(service, consulta::atualizarDados);
+
         setSizeFull();
-        addToPrimary(new ConsultaERPComponent(service));
-        addToSecondary(new CadastroERPComponent(service));
+        addToPrimary(consulta);
+        addToSecondary(cadastro);
     }
 }
