@@ -1,4 +1,4 @@
-package com.application.components.importador.cadastros;
+package com.application.components.importador.consultas;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
