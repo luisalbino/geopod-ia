@@ -33,7 +33,11 @@ public abstract class AbstractConsulta<S extends AbstractService<E, ?>, E extend
     }
 
     private void configFiltros() {
+        campoFiltroDescricao.setWidthFull();
         campoFiltroDescricao.setItems(this.dados);
+        campoFiltroDescricao.setPlaceholder("Descrição...");
+        campoFiltroDescricao.setItemLabelGenerator(E::getDescricao);
+
         add(campoFiltroDescricao);
     }
 
