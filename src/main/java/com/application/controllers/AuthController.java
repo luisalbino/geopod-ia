@@ -1,6 +1,7 @@
 package com.application.controllers;
 
 import com.application.helpers.JwtHelper;
+import com.application.models.UserModel;
 import com.application.services.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,9 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
     @PostMapping("/auth")
-    public String login(@RequestBody Object request) {
+    public String login(@RequestBody UserModel user) {
+        user.setUsername("admin");
 
-        String token = JwtHelper.generateToken("admin");
+        String token = JwtHelper.generateToken(user.getUsername());
         return token;
     }
 }

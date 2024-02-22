@@ -14,12 +14,13 @@ import java.util.Date;
 
 public class JwtHelper {
 
+    private static final String secretString = "aQw!2Dx#8fG@9pTkL5yS&bE$3jF*mV7n";
+
     public static String generateToken(String username) {
 
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
 
-        String secretString = "aQw!2Dx#8fG@9pTkL5yS&bE$3jF*mV7n";
         byte[] apiKeySecretBytes = Base64.getEncoder().encode(secretString.getBytes());
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
 
@@ -27,18 +28,7 @@ public class JwtHelper {
                 .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(new Date(nowMillis + 3600000)) // expira em 1 hora
-                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, signingKey)
                 .compact();
     }
-
-
-    /*
-    public static String extractUsername(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
-    */
 }
