@@ -53,7 +53,7 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Importa
         add(campoId, campoDescricao, getFormulario());
     }
 
-    private void onBotaoNovoClick(ClickEvent<Button> evento) {
+    private void onNovoClick(ClickEvent<Button> evento) {
         binder.refreshFields();
         botaoNovo.setEnabled(false);
         botaoSalvar.setEnabled(true);
@@ -63,7 +63,7 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Importa
         campoDescricao.focus();
     }
 
-    private void onBotaoSalvarClick(ClickEvent<Button> evento) {
+    private void onSalvarClick(ClickEvent<Button> evento) {
         binder.validate();
         if (binder.isValid()) {
             botaoNovo.setEnabled(true);
@@ -76,7 +76,7 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Importa
         }
     }
 
-    private void onBotaoCancelarClick(ClickEvent<Button> evento) {
+    private void onCancelarClick(ClickEvent<Button> evento) {
         botaoNovo.setEnabled(true);
         botaoSalvar.setEnabled(false);
         botaoCancelar.setEnabled(false);
@@ -84,16 +84,16 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Importa
     }
 
     private Component getFormulario() {
-        botaoNovo.addClickListener(this::onBotaoNovoClick);
+        botaoNovo.addClickListener(this::onNovoClick);
         botaoNovo.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
 
         botaoSalvar.setEnabled(false);
-        botaoSalvar.addClickListener(this::onBotaoSalvarClick);
+        botaoSalvar.addClickListener(this::onSalvarClick);
         botaoSalvar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         botaoCancelar.setEnabled(false);
         botaoCancelar.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        botaoCancelar.addClickListener(this::onBotaoCancelarClick);
+        botaoCancelar.addClickListener(this::onCancelarClick);
 
         return new HorizontalLayout(botaoNovo, botaoSalvar, botaoCancelar);
     }
@@ -102,5 +102,10 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Importa
         if (Objects.nonNull(afterSave)) {
             afterSave.run();
         }
+    }
+
+    public void open(E entidade) {
+        onNovoClick(null);
+        this.binder.setBean(entidade);
     }
 }
