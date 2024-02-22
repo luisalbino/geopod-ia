@@ -12,7 +12,7 @@ import jakarta.annotation.security.PermitAll;
 
 @PermitAll
 @PageTitle("Importador SQL - Cadastro ERP")
-@Route(value = "importador-cadastro-erp", layout = MainLayout.class)
+@Route(value = "cadastro-erp", layout = MainLayout.class)
 public class ERPView extends SplitLayout {
 
     private final ConsultaERPComponent consulta;
