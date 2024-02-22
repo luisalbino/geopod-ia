@@ -27,7 +27,7 @@ public class JwtHelper {
                 .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(new Date(nowMillis + 3600000)) // expira em 1 hora
-                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, signingKey)
                 .compact();
     }
 
