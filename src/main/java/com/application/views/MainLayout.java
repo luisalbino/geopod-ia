@@ -75,8 +75,8 @@ public class MainLayout extends AppLayout {
     }
 
     private SideNavItem getImportadorSQL() {
-        SideNavItem importadorSQL = new SideNavItem("Importador de SQL`s");
-        importadorSQL.addItem(new SideNavItem("SQL", PerfilView.class));
+        SideNavItem importadorSQL = new SideNavItem("Importador de SQL");
+        importadorSQL.addItem(new SideNavItem("SQL`s", PerfilView.class));
 
         SideNavItem cadastros = new SideNavItem("Cadastros");
         cadastros.addItem(new SideNavItem("Perfis", PerfilView.class));
