@@ -1,4 +1,4 @@
-package com.application.views.importador.cadastro;
+package com.application.views.importador;
 
 import com.application.components.importador.erp.CadastroERPComponent;
 import com.application.components.importador.erp.ConsultaERPComponent;

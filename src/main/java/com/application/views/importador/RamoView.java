@@ -1,4 +1,4 @@
-package com.application.views.importador.cadastro;
+package com.application.views.importador;
 
 import com.application.components.importador.ramo.CadastroRamoComponent;
 import com.application.components.importador.ramo.ConsultaRamoComponent;

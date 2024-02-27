@@ -1,4 +1,4 @@
-package com.application.views.importador.cadastro;
+package com.application.views.importador;
 
 import com.application.views.MainLayout;
 import com.vaadin.flow.component.html.Span;

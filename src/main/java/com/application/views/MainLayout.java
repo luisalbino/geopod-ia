@@ -1,10 +1,10 @@
 package com.application.views;
 
 import com.application.services.security.SecurityService;
-import com.application.views.importador.cadastro.BancoDeDadosView;
-import com.application.views.importador.cadastro.ERPView;
-import com.application.views.importador.cadastro.PerfilView;
-import com.application.views.importador.cadastro.RamoView;
+import com.application.views.importador.BancoDeDadosView;
+import com.application.views.importador.ERPView;
+import com.application.views.importador.PerfilView;
+import com.application.views.importador.RamoView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
