@@ -1,6 +1,6 @@
 package com.application.components.importador.consultas;
 
-import com.application.entities.importador.ImportadorEntity;
+import com.application.entities.importador.AbstractImportadorEntity;
 import com.application.helpers.interfaces.RunnableWithParameter;
 import com.application.services.AbstractService;
 import com.vaadin.flow.component.Component;
@@ -14,7 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import java.util.Collection;
 
-public abstract class AbstractConsulta<S extends AbstractService<E, ?>, E extends ImportadorEntity> extends VerticalLayout {
+public abstract class AbstractConsulta<S extends AbstractService<E, ?>, E extends AbstractImportadorEntity> extends VerticalLayout {
 
     private final S service;
     private Collection<E> dados;

@@ -6,7 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity(name = "erps")
-public class ERPEntity extends AbstractImportadorEntity {
-
+@Entity(name = "ramos")
+public class RamoEntity extends AbstractImportadorEntity {
 }

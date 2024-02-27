@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity(name = "perfil")
+@Entity(name = "perfis")
 public class PerfilEntity extends AbstractEntity {
 }

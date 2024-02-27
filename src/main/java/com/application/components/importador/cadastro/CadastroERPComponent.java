@@ -1,4 +1,4 @@
-package com.application.components.importador.cadastros;
+package com.application.components.importador.cadastro;
 
 import com.application.entities.importador.ERPEntity;
 import com.application.services.importador.ERPService;

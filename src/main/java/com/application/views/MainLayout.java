@@ -1,8 +1,10 @@
 package com.application.views;
 
 import com.application.services.security.SecurityService;
-import com.application.views.importador.cadastros.ERPView;
-import com.application.views.importador.cadastros.PerfilView;
+import com.application.views.importador.cadastro.BancoDadosView;
+import com.application.views.importador.cadastro.ERPView;
+import com.application.views.importador.cadastro.PerfilView;
+import com.application.views.importador.cadastro.RamoView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -79,8 +81,8 @@ public class MainLayout extends AppLayout {
         SideNavItem cadastros = new SideNavItem("Cadastros");
         cadastros.addItem(new SideNavItem("Perfis", PerfilView.class));
         cadastros.addItem(new SideNavItem("ERP`s", ERPView.class));
-        cadastros.addItem(new SideNavItem("Ramos", PerfilView.class));
-        cadastros.addItem(new SideNavItem("Banco de dados", PerfilView.class));
+        cadastros.addItem(new SideNavItem("Ramos", RamoView.class));
+        cadastros.addItem(new SideNavItem("Banco de dados", BancoDadosView.class));
 
         importadorSQL.addItem(cadastros);
 

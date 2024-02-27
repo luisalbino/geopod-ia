@@ -1,6 +1,6 @@
-package com.application.components.importador.cadastros;
+package com.application.components.importador.cadastro;
 
-import com.application.entities.importador.ImportadorEntity;
+import com.application.entities.importador.AbstractImportadorEntity;
 import com.application.helpers.DoubleToLongConverter;
 import com.application.services.AbstractService;
 import com.vaadin.flow.component.ClickEvent;
@@ -17,7 +17,7 @@ import io.micrometer.common.util.StringUtils;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class AbstractCadastro<S extends AbstractService<E, ?>, E extends ImportadorEntity> extends VerticalLayout {
+public class AbstractCadastro<S extends AbstractService<E, ?>, E extends AbstractImportadorEntity> extends VerticalLayout {
 
     private final S service;
     private final Runnable afterSave;
@@ -66,6 +66,8 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Importa
     private void onSalvarClick(ClickEvent<Button> evento) {
         binder.validate();
         if (binder.isValid()) {
+            campoDescricao.setReadOnly(true);
+
             botaoNovo.setEnabled(true);
             botaoSalvar.setEnabled(false);
             botaoCancelar.setEnabled(false);
@@ -80,6 +82,7 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Importa
         botaoNovo.setEnabled(true);
         botaoSalvar.setEnabled(false);
         botaoCancelar.setEnabled(false);
+        campoDescricao.setReadOnly(true);
         this.binder.setBean(this.instanciaVazia.get());
     }
 
