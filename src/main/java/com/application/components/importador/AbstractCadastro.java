@@ -1,4 +1,4 @@
-package com.application.components.importador.cadastro;
+package com.application.components.importador;
 
 import com.application.entities.importador.AbstractImportadorEntity;
 import com.application.helpers.DoubleToLongConverter;

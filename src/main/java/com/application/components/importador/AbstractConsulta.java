@@ -1,4 +1,4 @@
-package com.application.components.importador.consultas;
+package com.application.components.importador;
 
 import com.application.entities.importador.AbstractImportadorEntity;
 import com.application.helpers.interfaces.RunnableWithParameter;

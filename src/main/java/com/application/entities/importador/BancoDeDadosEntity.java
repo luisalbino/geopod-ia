@@ -7,5 +7,5 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name = "bancos_de_dados")
-public class BancoDadosEntity extends AbstractImportadorEntity {
+public class BancoDeDadosEntity extends AbstractImportadorEntity {
 }

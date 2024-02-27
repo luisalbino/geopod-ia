@@ -1,5 +1,6 @@
-package com.application.components.importador.cadastro;
+package com.application.components.importador.ramo;
 
+import com.application.components.importador.AbstractCadastro;
 import com.application.entities.importador.RamoEntity;
 import com.application.services.importador.RamoService;
 

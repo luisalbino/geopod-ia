@@ -1,7 +1,7 @@
 package com.application.views.importador.cadastro;
 
-import com.application.components.importador.cadastro.CadastroERPComponent;
-import com.application.components.importador.consultas.ConsultaERPComponent;
+import com.application.components.importador.erp.CadastroERPComponent;
+import com.application.components.importador.erp.ConsultaERPComponent;
 import com.application.entities.importador.ERPEntity;
 import com.application.services.importador.ERPService;
 import com.application.views.MainLayout;

@@ -1,7 +1,7 @@
 package com.application.views;
 
 import com.application.services.security.SecurityService;
-import com.application.views.importador.cadastro.BancoDadosView;
+import com.application.views.importador.cadastro.BancoDeDadosView;
 import com.application.views.importador.cadastro.ERPView;
 import com.application.views.importador.cadastro.PerfilView;
 import com.application.views.importador.cadastro.RamoView;
@@ -82,7 +82,7 @@ public class MainLayout extends AppLayout {
         cadastros.addItem(new SideNavItem("Perfis", PerfilView.class));
         cadastros.addItem(new SideNavItem("ERP`s", ERPView.class));
         cadastros.addItem(new SideNavItem("Ramos", RamoView.class));
-        cadastros.addItem(new SideNavItem("Banco de dados", BancoDadosView.class));
+        cadastros.addItem(new SideNavItem("Banco de dados", BancoDeDadosView.class));
 
         importadorSQL.addItem(cadastros);
 

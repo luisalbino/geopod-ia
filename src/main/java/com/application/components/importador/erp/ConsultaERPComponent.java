@@ -1,5 +1,6 @@
-package com.application.components.importador.consultas;
+package com.application.components.importador.erp;
 
+import com.application.components.importador.AbstractConsulta;
 import com.application.entities.importador.ERPEntity;
 import com.application.helpers.interfaces.RunnableWithParameter;
 import com.application.services.importador.ERPService;

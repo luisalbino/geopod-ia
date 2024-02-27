@@ -1,7 +1,7 @@
 package com.application.views.importador.cadastro;
 
-import com.application.components.importador.cadastro.CadastroRamoComponent;
-import com.application.components.importador.consultas.ConsultaRamoComponent;
+import com.application.components.importador.ramo.CadastroRamoComponent;
+import com.application.components.importador.ramo.ConsultaRamoComponent;
 import com.application.entities.importador.RamoEntity;
 import com.application.services.importador.RamoService;
 import com.application.views.MainLayout;
