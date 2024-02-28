@@ -11,7 +11,7 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 
 @PermitAll
-@PageTitle("Importador SQL - Cadastro Banco de Dados")
+@PageTitle("Importador SQL - Cadastro Bancos de Dados")
 @Route(value = "cadastro-banco-dados", layout = MainLayout.class)
 public class BancoDeDadosView extends SplitLayout {
 

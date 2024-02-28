@@ -22,13 +22,13 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Abstrac
     private final S service;
     private final Runnable afterSave;
     private final Supplier<E> instanciaVazia;
-    private final Binder<E> binder = new Binder<>();
+    protected final Binder<E> binder = new Binder<>();
 
     private final Button botaoNovo = new Button("Novo");
     private final Button botaoSalvar = new Button("Salvar");
     private final Button botaoCancelar = new Button("Cancelar");
 
-    private final NumberField campoId;
+    protected final VerticalLayout formularioExtra = new VerticalLayout();
     private final TextField campoDescricao = new TextField("Descrição");
 
     protected AbstractCadastro(S service, Supplier<E> instanciaVazia, Runnable afterSave) {
@@ -37,7 +37,7 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Abstrac
         this.instanciaVazia = instanciaVazia;
         this.binder.setBean(this.instanciaVazia.get());
 
-        campoId = new NumberField();
+        var campoId = new NumberField();
         campoId.setWidth("75px");
         campoId.setReadOnly(true);
         this.binder.forField(campoId)
@@ -46,11 +46,20 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Abstrac
 
         campoDescricao.setWidth("350px");
         campoDescricao.setReadOnly(true);
+        campoDescricao.setRequired(true);
         this.binder.forField(campoDescricao)
                 .withValidator(StringUtils::isNotBlank, "Informe uma descrição antes de salvar!")
                 .bind(E::getDescricao, E::setDescricao);
 
-        add(campoId, campoDescricao, getFormulario());
+        add(campoId, campoDescricao, formularioExtra, getBotoes());
+    }
+
+    protected void bloquearFormularioExtra() {
+        // TODO: Do nothing
+    }
+
+    protected void liberarFormularioExtra() {
+        // TODO: Do nothing
     }
 
     private void onNovoClick(ClickEvent<Button> evento) {
@@ -61,6 +70,8 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Abstrac
 
         campoDescricao.setReadOnly(false);
         campoDescricao.focus();
+
+        liberarFormularioExtra();
     }
 
     private void onSalvarClick(ClickEvent<Button> evento) {
@@ -74,6 +85,9 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Abstrac
 
             service.save(binder.getBean());
             binder.setBean(this.instanciaVazia.get());
+
+            bloquearFormularioExtra();
+
             runAfterSave();
         }
     }
@@ -83,10 +97,13 @@ public class AbstractCadastro<S extends AbstractService<E, ?>, E extends Abstrac
         botaoSalvar.setEnabled(false);
         botaoCancelar.setEnabled(false);
         campoDescricao.setReadOnly(true);
+
+        bloquearFormularioExtra();
+
         this.binder.setBean(this.instanciaVazia.get());
     }
 
-    private Component getFormulario() {
+    private Component getBotoes() {
         botaoNovo.addClickListener(this::onNovoClick);
         botaoNovo.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
 

@@ -11,7 +11,7 @@ import lombok.Setter;
 @MappedSuperclass
 public abstract class AbstractImportadorEntity extends AbstractEntity {
 
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "text", nullable = false)
     private String descricao;
 
 }
