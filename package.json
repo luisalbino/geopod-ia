@@ -271,8 +271,8 @@
     "lit": "$lit",
     "@polymer/polymer": "$@polymer/polymer",
     "proj4": "$proj4",
-    "@fontsource/quicksand": "$@fontsource/quicksand",
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
-    "date-fns": "$date-fns"
+    "date-fns": "$date-fns",
+    "@fontsource/quicksand": "$@fontsource/quicksand"
   }
 }
