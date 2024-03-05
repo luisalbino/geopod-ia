@@ -1,8 +1,10 @@
 package com.application.views;
 
 import com.application.services.security.SecurityService;
-import com.application.views.about.AboutView;
-import com.application.views.helloworld.HelloWorldView;
+import com.application.views.importador.BancoDeDadosView;
+import com.application.views.importador.ERPView;
+import com.application.views.importador.PerfilView;
+import com.application.views.importador.RamoView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -17,8 +19,6 @@ import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import org.springframework.data.convert.DtoInstantiatingConverter;
-import org.vaadin.lineawesome.LineAwesomeIcon;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -69,11 +69,24 @@ public class MainLayout extends AppLayout {
 
     private SideNav createNavigation() {
         SideNav nav = new SideNav();
-
-        nav.addItem(new SideNavItem("Hello World", HelloWorldView.class, LineAwesomeIcon.GLOBE_SOLID.create()));
-        nav.addItem(new SideNavItem("About", AboutView.class, LineAwesomeIcon.FILE.create()));
+        nav.addItem(getImportadorSQL());
 
         return nav;
+    }
+
+    private SideNavItem getImportadorSQL() {
+        SideNavItem importadorSQL = new SideNavItem("Importador de SQL");
+        importadorSQL.addItem(new SideNavItem("SQL`s", PerfilView.class));
+
+        SideNavItem cadastros = new SideNavItem("Cadastros");
+        cadastros.addItem(new SideNavItem("Perfis", PerfilView.class));
+        cadastros.addItem(new SideNavItem("ERP`s", ERPView.class));
+        cadastros.addItem(new SideNavItem("Ramos", RamoView.class));
+        cadastros.addItem(new SideNavItem("Banco de dados", BancoDeDadosView.class));
+
+        importadorSQL.addItem(cadastros);
+
+        return importadorSQL;
     }
 
     private Footer createFooter() {
