@@ -19,4 +19,6 @@ public class GeoScriptEntity extends AbstractImportadorEntity {
 
     private String sql;
 
+    private Boolean isStandard = false;
+
 }

@@ -3,7 +3,12 @@ package com.application.components.importador.sql;
 import com.application.entities.importador.GeoScriptEntity;
 import com.application.entities.importador.PerfilEntity;
 import com.application.services.importador.SqlService;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.button.Button;
@@ -21,12 +26,11 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
 
     private AceEditor aceEditor;
     private HorizontalLayout selectedLayout;
-
     private final SqlService sqlService;
-
     private final PerfilEntity perfil;
-
     private T selectedEnum;
+    private Checkbox checkBox;
+    private int selectedIndex = -1;
 
     public SqlEditorComponent(Class<T> enumClass, SqlService sqlService, PerfilEntity perfil) {
         this.sqlService = sqlService;
@@ -53,6 +57,7 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
     private VerticalLayout createListLayout(Class<T> enumClass) {
         VerticalLayout listLayout = new VerticalLayout();
         listLayout.setSizeFull();
+        listLayout.getStyle().set("overflow-y", "auto");
 
         T[] enumConstants = enumClass.getEnumConstants();
         Arrays.sort(enumConstants, Comparator.comparing(Enum::name));
@@ -80,20 +85,23 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
             itemLayout.getStyle().set("background-color", "#f8f8f8");
         }
 
-        itemLayout.addClickListener(event -> selectItem(itemLayout, enumValue));
+        itemLayout.addClickListener(event -> selectItem(itemLayout, enumValue, index));
         return itemLayout;
     }
 
-    private void selectItem(HorizontalLayout itemLayout, T enumValue) {
+    private void selectItem(HorizontalLayout itemLayout, T enumValue, int index) {
         if (selectedLayout != null) {
             selectedLayout.getStyle().remove("background-color");
-            if (Arrays.asList(selectedLayout.getChildren().toArray()).indexOf(selectedLayout) % 2 == 0) {
+            if (selectedIndex % 2 == 0) {
                 selectedLayout.getStyle().set("background-color", "#f8f8f8");
+            } else {
+                selectedLayout.getStyle().set("background-color", "");
             }
         }
         selectedEnum = enumValue;
         selectedLayout = itemLayout;
         selectedLayout.getStyle().set("background-color", "#d0e0f0");
+        selectedIndex = index;
         loadAndDisplaySql(enumValue);
     }
 
@@ -108,11 +116,13 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
             throw new RuntimeException("Erro ao invocar o método getValue no Enum: " + enumValue.getClass().getName(), e);
         }
 
-        GeoScriptEntity geoScript = sqlService.findByScriptModuleNameAndScriptCode(scriptModuleName, scriptCode);
+        GeoScriptEntity geoScript = sqlService.findByPerfilAndScriptModuleNameAndScriptCode(perfil, scriptModuleName, scriptCode);
         if (geoScript != null) {
             aceEditor.setValue(geoScript.getSql());
+            checkBox.setValue(geoScript.getIsStandard());
         } else {
-            aceEditor.setValue("SEM SQL CADASTRADO");
+            aceEditor.setValue(null);
+            checkBox.setValue(false);
         }
     }
 
@@ -120,7 +130,11 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         VerticalLayout editorLayout = new VerticalLayout();
         editorLayout.setSizeFull();
 
-        Button btnSave = new Button("Salvar", event -> saveCurrentSql());
+        HorizontalLayout controlsLayout = new HorizontalLayout();
+        controlsLayout.setWidthFull();
+        controlsLayout.setAlignItems(FlexComponent.Alignment.END);
+
+        checkBox = new Checkbox("Padrão");
 
         aceEditor = new AceEditor();
         aceEditor.setSizeFull();
@@ -128,7 +142,13 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         aceEditor.setMode(AceMode.sql);
         aceEditor.setPlaceholder("Escreva seu SQL aqui...");
 
-        editorLayout.add(btnSave,aceEditor);
+        Button btnSave = new Button("Salvar", event -> saveCurrentSql());
+        btnSave.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        controlsLayout.add(btnSave, checkBox);
+        controlsLayout.setFlexGrow(1, aceEditor);
+
+        editorLayout.add(controlsLayout, aceEditor);
 
         return editorLayout;
     }
@@ -143,41 +163,42 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
 
     private void saveCurrentSql() {
         if (selectedEnum == null) {
-            // Caso nenhum enum tenha sido selecionado, ou alguma validação falhar
-            // Exemplo: Notification.show("Selecione um Enum primeiro.");
+            showNotification("Selecione um Enum primeiro.", NotificationVariant.LUMO_ERROR);
+            return;
+        } else if (aceEditor.getValue().isBlank()) {
+            showNotification("Informe um SQL primeiro.", NotificationVariant.LUMO_ERROR);
             return;
         }
 
         String sqlToSave = aceEditor.getValue();
         String scriptModuleName = selectedEnum.name();
         int scriptCode;
-        String scriptDescription;
 
         try {
             Method method = selectedEnum.getClass().getMethod("getValue");
             scriptCode = (Integer) method.invoke(selectedEnum);
-
-            method = selectedEnum.getClass().getMethod("getDescription");
-            scriptDescription = (String) method.invoke(selectedEnum);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            // Exemplo: Notification.show("Erro ao obter o código do Enum.");
+            showNotification("Erro ao obter o código do Enum.", NotificationVariant.LUMO_ERROR);
             return;
         }
 
-        // Aqui, você chama o serviço para salvar o SQL no banco de dados
-        // Por exemplo, usando sqlService para atualizar a entidade GeoScriptEntity correspondente
-        // Este é um exemplo simplificado. Você precisa adaptá-lo ao seu método de serviço específico.
-        GeoScriptEntity geoScript = sqlService.findByScriptModuleNameAndScriptCode(scriptModuleName, scriptCode);
+        GeoScriptEntity geoScript = sqlService.findByPerfilAndScriptModuleNameAndScriptCode(perfil, scriptModuleName, scriptCode);
         if (geoScript == null) {
-            geoScript = new GeoScriptEntity(); // ou alguma outra lógica de criação
+            geoScript = new GeoScriptEntity();
+            geoScript.setScriptCode(scriptCode);
+            geoScript.setPerfil(perfil);
+            geoScript.setScriptModuleName(scriptModuleName);
+            geoScript.setDescricao(getDescription(selectedEnum));
         }
         geoScript.setSql(sqlToSave);
-        geoScript.setScriptCode(scriptCode);
-        geoScript.setPerfil(perfil);
-        geoScript.setScriptModuleName(scriptModuleName);
-        geoScript.setDescricao(scriptDescription);
-        // Defina outros campos necessários de geoScript aqui
-        sqlService.save(geoScript); // Certifique-se de que seu serviço tem um método save
-        // Exemplo: Notification.show("SQL salvo com sucesso.");
+        geoScript.setIsStandard(checkBox.getValue());
+
+        sqlService.save(geoScript);
+        showNotification("[" + geoScript.getDescricao() + " ] - Salvo com sucesso.", NotificationVariant.LUMO_SUCCESS);
+    }
+
+    private void showNotification(String message, NotificationVariant variant) {
+        Notification.show(message, 5000, Notification.Position.TOP_CENTER)
+                .addThemeVariants(variant);
     }
 }
