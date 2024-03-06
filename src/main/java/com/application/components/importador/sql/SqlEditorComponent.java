@@ -1,10 +1,17 @@
 package com.application.components.importador.sql;
 
+import com.application.entities.importador.GeoScriptEntity;
+import com.application.services.importador.SqlService;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import de.f0rce.ace.AceEditor;
 
+import de.f0rce.ace.AceEditor;
+import de.f0rce.ace.enums.AceMode;
+import de.f0rce.ace.enums.AceTheme;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -13,7 +20,10 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
     private AceEditor aceEditor;
     private HorizontalLayout selectedLayout;
 
-    public SqlEditorComponent(Class<T> enumClass) {
+    private final SqlService sqlService;
+
+    public SqlEditorComponent(Class<T> enumClass, SqlService sqlService) {
+        this.sqlService = sqlService;
         createLayouts(enumClass);
     }
 
@@ -77,7 +87,26 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
 
         selectedLayout = itemLayout;
         selectedLayout.getStyle().set("background-color", "#d0e0f0");
-        updateAceEditorContent(getDescription(enumValue));
+        loadAndDisplaySql(enumValue);
+    }
+
+    private void loadAndDisplaySql(Enum<?> enumValue) {
+        String scriptModuleName = enumValue.name();
+        int scriptCode;
+
+        try {
+            Method method = enumValue.getClass().getMethod("getValue");
+            scriptCode = (Integer) method.invoke(enumValue);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Erro ao invocar o método getValue no Enum: " + enumValue.getClass().getName(), e);
+        }
+
+        GeoScriptEntity geoScript = sqlService.findByScriptModuleNameAndScriptCode(scriptModuleName, scriptCode);
+        if (geoScript != null) {
+            aceEditor.setValue(geoScript.getSql());
+        } else {
+            aceEditor.setValue("SEM SQL CADASTRADO");
+        }
     }
 
     private VerticalLayout createEditorLayout() {
@@ -86,13 +115,13 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
 
         aceEditor = new AceEditor();
         aceEditor.setSizeFull();
+        aceEditor.setTheme(AceTheme.twilight);
+        aceEditor.setMode(AceMode.sql);
+        aceEditor.setPlaceholder("Escreva seu SQL aqui...");
+
         editorLayout.add(aceEditor);
 
         return editorLayout;
-    }
-
-    private void updateAceEditorContent(String content) {
-        aceEditor.setValue(content);
     }
 
     private String getDescription(T enumValue) {

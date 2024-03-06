@@ -11,4 +11,8 @@ public class SqlService extends AbstractService<GeoScriptEntity, GeoScriptReposi
     protected SqlService(GeoScriptRepository repository) {
         super(repository);
     }
+
+    public GeoScriptEntity findByScriptModuleNameAndScriptCode(String scriptModuleName, int scriptCode) {
+        return repository.findByScriptModuleNameAndScriptCode(scriptModuleName, scriptCode);
+    }
 }

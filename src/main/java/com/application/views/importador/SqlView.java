@@ -26,8 +26,11 @@ import java.util.Collection;
 public class SqlView extends SplitLayout {
 
     Collection<PerfilEntity> listaPerfis;
+    private final SqlService sqlService;
+
     public SqlView(PerfilService perfilService, SqlService sqlService) {
         super();
+        this.sqlService = sqlService;
         listaPerfis = perfilService.getAll();
         setSizeFull();
 
@@ -43,13 +46,13 @@ public class SqlView extends SplitLayout {
 
         TabSheet tabSheet = new TabSheet();
         tabSheet.add("Analytics",
-                new SqlEditorComponent(GeoAnalyticsScriptEnum.class));
+                new SqlEditorComponent(GeoAnalyticsScriptEnum.class, sqlService));
         tabSheet.add("Força de Vendas",
-                new SqlEditorComponent(GeoForcaVendasScriptEnum.class));
+                new SqlEditorComponent(GeoForcaVendasScriptEnum.class, sqlService));
         tabSheet.add("B2B",
-                new SqlEditorComponent(GeoB2bScriptEnum.class));
+                new SqlEditorComponent(GeoB2bScriptEnum.class, sqlService));
         tabSheet.add("CRM",
-                new SqlEditorComponent(GeoCrmScriptEnum.class));
+                new SqlEditorComponent(GeoCrmScriptEnum.class, sqlService));
         tabSheet.setSizeFull();
         verticalLayout.add(comboBoxPerfis);
         verticalLayout.add(tabSheet);

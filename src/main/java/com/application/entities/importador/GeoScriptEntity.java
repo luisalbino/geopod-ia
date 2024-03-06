@@ -15,7 +15,7 @@ public class GeoScriptEntity extends AbstractImportadorEntity {
 
     private String scriptModuleName;
 
-    private int scriptCode;
+    private Integer scriptCode;
 
     private String sql;
 
