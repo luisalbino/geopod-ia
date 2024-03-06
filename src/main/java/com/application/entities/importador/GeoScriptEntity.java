@@ -13,8 +13,9 @@ public class GeoScriptEntity extends AbstractImportadorEntity {
     @ManyToOne
     private PerfilEntity perfil;
 
-    @Enumerated(EnumType.STRING)
-    private GeoAnalyticsScriptEnum geoAnalyticsEnum;
+    private String scriptModuleName;
+
+    private int scriptCode;
 
     private String sql;
 
