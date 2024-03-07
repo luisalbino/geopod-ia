@@ -1,14 +1,13 @@
 package com.application.parser.importador;
 
 import com.application.entities.importador.GeoScriptEntity;
-import com.application.entities.importador.PerfilEntity;
 import com.application.parser.AbstractParser;
-import com.application.services.importador.SqlService;
+import com.application.services.importador.GeoScriptService;
 
-public class GeoScriptParser extends AbstractParser<GeoScriptEntity, SqlService> {
+public class GeoScriptParser extends AbstractParser<GeoScriptEntity, GeoScriptService> {
 
-    public GeoScriptParser(SqlService sqlService) {
-        super(sqlService);
+    public GeoScriptParser(GeoScriptService geoScriptService) {
+        super(geoScriptService);
     }
 
     @Override

@@ -1,8 +1,8 @@
-package com.application.components.importador.sql;
+package com.application.components.importador.geoScript;
 
 import com.application.entities.importador.GeoScriptEntity;
 import com.application.entities.importador.PerfilEntity;
-import com.application.services.importador.SqlService;
+import com.application.services.importador.GeoScriptService;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -21,26 +21,25 @@ import de.f0rce.ace.enums.AceTheme;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
+public class GeoScriptEditorComponent<T extends Enum<T>> extends VerticalLayout {
 
     private AceEditor aceEditor;
     private HorizontalLayout selectedLayout;
 
     private VerticalLayout listLayout = new VerticalLayout();
-    private final SqlService sqlService;
+    private final GeoScriptService geoScriptService;
     private final PerfilEntity perfil;
     private T selectedEnum;
     private Checkbox checkBox;
     private int selectedIndex = -1;
 
-    public SqlEditorComponent(Class<T> enumClass, SqlService sqlService, PerfilEntity perfil) {
-        this.sqlService = sqlService;
+    public GeoScriptEditorComponent(Class<T> enumClass, GeoScriptService geoScriptService, PerfilEntity perfil) {
+        this.geoScriptService = geoScriptService;
         this.perfil = perfil;
         createLayouts(enumClass);
     }
@@ -67,7 +66,7 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         listLayout.removeAll();
         listLayout.getStyle().set("overflow-y", "auto");
 
-        List<GeoScriptEntity> geoScriptListByPerfil = sqlService.findByPerfil(perfil);
+        List<GeoScriptEntity> geoScriptListByPerfil = geoScriptService.findByPerfil(perfil);
 
         List<T> enumsWithSql = new ArrayList<>();
         List<T> enumsWithoutSql = new ArrayList<>();
@@ -146,7 +145,7 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
             throw new RuntimeException("Erro ao invocar o método getValue no Enum: " + enumValue.getClass().getName(), e);
         }
 
-        GeoScriptEntity geoScript = sqlService.findByPerfilAndScriptModuleNameAndScriptCode(perfil, scriptModuleName, scriptCode);
+        GeoScriptEntity geoScript = geoScriptService.findByPerfilAndScriptModuleNameAndScriptCode(perfil, scriptModuleName, scriptCode);
         if (geoScript != null) {
             aceEditor.setValue(geoScript.getSql());
             checkBox.setValue(geoScript.getIsStandard());
@@ -224,7 +223,7 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
             return;
         }
 
-        GeoScriptEntity geoScript = sqlService.findByPerfilAndScriptModuleNameAndScriptCode(perfil, scriptModuleName, scriptCode);
+        GeoScriptEntity geoScript = geoScriptService.findByPerfilAndScriptModuleNameAndScriptCode(perfil, scriptModuleName, scriptCode);
         if (geoScript == null) {
             geoScript = new GeoScriptEntity();
             geoScript.setScriptCode(scriptCode);
@@ -248,9 +247,9 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
             return;
         }
 
-        GeoScriptEntity geoScript = sqlService.findByPerfilAndScriptModuleNameAndScriptCode(perfil, scriptModuleName, scriptCode);
+        GeoScriptEntity geoScript = geoScriptService.findByPerfilAndScriptModuleNameAndScriptCode(perfil, scriptModuleName, scriptCode);
         if (geoScript != null) {
-            sqlService.remove(geoScript);
+            geoScriptService.remove(geoScript);
             showNotification("SQL excluído com sucesso.", NotificationVariant.LUMO_SUCCESS);
             updateListLayout(selectedEnum.getDeclaringClass());
         } else {
@@ -288,7 +287,7 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
     private void saveGeoScript(GeoScriptEntity geoScript, String sql, boolean isStandard) {
         geoScript.setSql(sql);
         geoScript.setIsStandard(isStandard);
-        sqlService.save(geoScript);
+        geoScriptService.save(geoScript);
         showNotification("[" + geoScript.getDescricao() + " ] - Salvo com sucesso.", NotificationVariant.LUMO_SUCCESS);
         postActionCleanup();
     }

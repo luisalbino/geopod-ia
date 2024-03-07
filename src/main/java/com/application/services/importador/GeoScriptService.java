@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class SqlService extends AbstractService<GeoScriptEntity, GeoScriptRepository>  {
+public class GeoScriptService extends AbstractService<GeoScriptEntity, GeoScriptRepository>  {
 
-    protected SqlService(GeoScriptRepository repository) {
+    protected GeoScriptService(GeoScriptRepository repository) {
         super(repository);
     }
 
