@@ -1,6 +1,6 @@
-package com.application.enums;
+package com.application.enums.importador;
 
-public enum GeoForcaVendasScriptEnum {
+public enum ForcaVendasSqlEnum {
     FV_TABELA_DE_PRECO(10, "Tabela de Preço"),
     FV_TABELA_DE_PRECO_POR_REPRESENTANTE(15, "Tabela de Preço por Representante"),
     FV_TABELA_DE_PRECO_POLITICA(17, "Tabela de Preço - Política"),
@@ -125,19 +125,19 @@ public enum GeoForcaVendasScriptEnum {
     FV_PRODUTOS_DATA_DE_ENTREGA(905, "Produtos - Data de Entrega"),
     FV_PRODUTOS_PRIORIDADE_DE_LINHA_PARA_DISTRIBUICAO(910, "Produtos - Prioridade de Linha para Distribuição");
 
-    private final int value;
-    private final String description;
+    private final int codigo;
+    private final String descricao;
 
-    GeoForcaVendasScriptEnum(int value, String description) {
-        this.value = value;
-        this.description = description;
+    ForcaVendasSqlEnum(int codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
     }
 
-    public int getValue() {
-        return value;
+    public int getCodigo() {
+        return codigo;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescricao() {
+        return descricao;
     }
 }

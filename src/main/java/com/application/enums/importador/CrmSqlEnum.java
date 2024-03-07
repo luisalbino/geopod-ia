@@ -1,6 +1,6 @@
-package com.application.enums;
+package com.application.enums.importador;
 
-public enum GeoCrmScriptEnum {
+public enum CrmSqlEnum {
     CRM_DADOS_CADASTRAIS(10, "Dados Cadastrais"),
     CRM_PESQUISA_POR_NOME(20, "Pesquisa por Nome"),
     CRM_PESQUISA_AVANCADA(21, "Pesquisa Avançada"),
@@ -22,19 +22,19 @@ public enum GeoCrmScriptEnum {
     CRM_PESQUISA_CLASSIFICACAO_1(101, "Pesquisa - Classificação 1"),
     CRM_VENDAS_POR_COLECAO(110, "Vendas por Coleção");
 
-    private final int value;
-    private final String description;
+    private final int codigo;
+    private final String descricao;
 
-    GeoCrmScriptEnum(int value, String description) {
-        this.value = value;
-        this.description = description;
+    CrmSqlEnum(int codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
     }
 
-    public int getValue() {
-        return value;
+    public int getCodigo() {
+        return codigo;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescricao() {
+        return descricao;
     }
 }

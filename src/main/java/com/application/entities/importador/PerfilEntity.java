@@ -27,5 +27,5 @@ public class PerfilEntity extends AbstractImportadorEntity {
     private BancoDeDadosEntity bancoDeDados;
 
     @OneToMany(mappedBy = "perfil")
-    private List<GeoScriptEntity> geoScriptEntities;
+    private List<SqlEntity> geoScriptEntities;
 }

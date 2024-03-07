@@ -9,19 +9,19 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Table(uniqueConstraints={@UniqueConstraint(name ="geoscript_uk", columnNames = {"scriptCode", "scriptModuleName", "perfil_id"})})
-@Entity(name = "geo_script")
-public class GeoScriptEntity extends AbstractImportadorEntity {
+@Table(uniqueConstraints={@UniqueConstraint(name ="sqls_uk", columnNames = {"codigoSql", "nomeModuloSql", "perfil_id"})})
+@Entity(name = "sqls")
+public class SqlEntity extends AbstractImportadorEntity {
 
     @ManyToOne(optional = false)
     private PerfilEntity perfil;
 
-    private String scriptModuleName;
+    private String nomeModuloSql;
 
-    private Integer scriptCode;
+    private Integer codigoSql;
 
     private String sql;
 
-    private Boolean isStandard = false;
+    private Boolean isPadrao = false;
 
 }

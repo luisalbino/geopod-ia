@@ -1,6 +1,6 @@
-package com.application.enums;
+package com.application.enums.importador;
 
-public enum GeoB2bScriptEnum {
+public enum B2bSqlEnum {
     B2B_REFERENCIA(10, "Referência"),
     B2B_REFERENCIA_GRADE(20, "Referência - Grade"),
     B2B_REFERENCIA_GRADE_FECHADA(21, "Referência - Grade Fechada"),
@@ -46,19 +46,19 @@ public enum GeoB2bScriptEnum {
     B2B_TABELA_DE_PRECO(390, "Tabela de Preço"),
     B2B_NOTA_DE_DEVOLUCAO_INTEGRAL(315, "Nota de Devolução Integral");
 
-    private final int value;
-    private final String description;
+    private final int codigo;
+    private final String descricao;
 
-    GeoB2bScriptEnum(int value, String description) {
-        this.value = value;
-        this.description = description;
+    B2bSqlEnum(int codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
     }
 
-    public int getValue() {
-        return value;
+    public int getCodigo() {
+        return codigo;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescricao() {
+        return descricao;
     }
 }

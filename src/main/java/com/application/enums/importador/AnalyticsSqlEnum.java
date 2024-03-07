@@ -1,6 +1,6 @@
-package com.application.enums;
+package com.application.enums.importador;
 
-public enum GeoAnalyticsScriptEnum {
+public enum AnalyticsSqlEnum {
     AN_REPRESENTANTE(10, "Representante"),
     AN_REPRESENTANTES_DOS_CLIENTES(11, "Representantes dos Clientes"),
     AN_GERENTE_DE_REPRESENTANTE(12, "Gerente de Representante"),
@@ -43,19 +43,19 @@ public enum GeoAnalyticsScriptEnum {
     AN_RANKING_DE_REFERENCIAS(1300, "Ranking de Referências"),
     AN_PAISES(1310, "Países");
 
-    private final int value;
-    private final String description;
+    private final int codigo;
+    private final String descricao;
 
-    GeoAnalyticsScriptEnum(int value, String description) {
-        this.value = value;
-        this.description = description;
+    AnalyticsSqlEnum(int codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
     }
 
-    public int getValue() {
-        return value;
+    public int getCodigo() {
+        return codigo;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescricao() {
+        return descricao;
     }
 }

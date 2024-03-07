@@ -1,13 +1,13 @@
 package com.application.views.importador;
 
-import com.application.components.importador.geoScript.GeoScriptEditorComponent;
+import com.application.components.importador.sql.SqlEditorComponent;
 import com.application.entities.importador.PerfilEntity;
-import com.application.enums.GeoAnalyticsScriptEnum;
-import com.application.enums.GeoB2bScriptEnum;
-import com.application.enums.GeoCrmScriptEnum;
-import com.application.enums.GeoForcaVendasScriptEnum;
+import com.application.enums.importador.AnalyticsSqlEnum;
+import com.application.enums.importador.B2bSqlEnum;
+import com.application.enums.importador.CrmSqlEnum;
+import com.application.enums.importador.ForcaVendasSqlEnum;
 import com.application.services.importador.PerfilService;
-import com.application.services.importador.GeoScriptService;
+import com.application.services.importador.SqlService;
 import com.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -26,13 +26,13 @@ import java.util.Collection;
 public class SqlView extends SplitLayout {
 
     private Collection<PerfilEntity> listaPerfis;
-    private final GeoScriptService geoScriptService;
+    private final SqlService sqlService;
     private TabSheet tabSheet;
     private ComboBox<PerfilEntity> comboBoxPerfis;
 
-    public SqlView(PerfilService perfilService, GeoScriptService geoScriptService) {
+    public SqlView(PerfilService perfilService, SqlService sqlService) {
         super();
-        this.geoScriptService = geoScriptService;
+        this.sqlService = sqlService;
         listaPerfis = perfilService.getAll();
         setSizeFull();
 
@@ -65,10 +65,10 @@ public class SqlView extends SplitLayout {
     private void loadTabSheet(PerfilEntity perfil) {
         clearTabSheet();
         tabSheet = new TabSheet();
-        tabSheet.add("Analytics", new GeoScriptEditorComponent<>(GeoAnalyticsScriptEnum.class, geoScriptService, perfil));
-        tabSheet.add("Força de Vendas", new GeoScriptEditorComponent<>(GeoForcaVendasScriptEnum.class, geoScriptService, perfil));
-        tabSheet.add("B2B", new GeoScriptEditorComponent<>(GeoB2bScriptEnum.class, geoScriptService, perfil));
-        tabSheet.add("CRM", new GeoScriptEditorComponent<>(GeoCrmScriptEnum.class, geoScriptService, perfil));
+        tabSheet.add("Analytics", new SqlEditorComponent<>(AnalyticsSqlEnum.class, sqlService, perfil));
+        tabSheet.add("Força de Vendas", new SqlEditorComponent<>(ForcaVendasSqlEnum.class, sqlService, perfil));
+        tabSheet.add("B2B", new SqlEditorComponent<>(B2bSqlEnum.class, sqlService, perfil));
+        tabSheet.add("CRM", new SqlEditorComponent<>(CrmSqlEnum.class, sqlService, perfil));
         tabSheet.setSizeFull();
         VerticalLayout tabSheetLayout = (VerticalLayout) getPrimaryComponent().getChildren().toArray()[1];
         tabSheetLayout.add(tabSheet);
