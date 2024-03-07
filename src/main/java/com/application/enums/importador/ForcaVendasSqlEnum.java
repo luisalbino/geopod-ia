@@ -140,4 +140,6 @@ public enum ForcaVendasSqlEnum {
     public String getDescricao() {
         return descricao;
     }
+
+    public int getModulo() {return ModuloEnum.FORCA_DE_VENDAS.getCodigo();}
 }

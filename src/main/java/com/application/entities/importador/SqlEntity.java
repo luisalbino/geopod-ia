@@ -1,5 +1,6 @@
 package com.application.entities.importador;
 
+import com.application.enums.importador.ModuloEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -9,14 +10,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Table(uniqueConstraints={@UniqueConstraint(name ="sqls_uk", columnNames = {"codigoSql", "nomeModuloSql", "perfil_id"})})
+@Table(uniqueConstraints={@UniqueConstraint(name ="sqls_uk", columnNames = {"codigoSql", "codigoModulo", "perfil_id"})})
 @Entity(name = "sqls")
 public class SqlEntity extends AbstractImportadorEntity {
 
     @ManyToOne(optional = false)
     private PerfilEntity perfil;
 
-    private String nomeModuloSql;
+    private Integer codigoModulo;
 
     private Integer codigoSql;
 

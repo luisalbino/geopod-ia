@@ -2,6 +2,7 @@ package com.application.components.importador.sql;
 
 import com.application.entities.importador.SqlEntity;
 import com.application.entities.importador.PerfilEntity;
+import com.application.enums.importador.ModuloEnum;
 import com.application.services.importador.SqlService;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -73,7 +74,8 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
 
         for (T enumValue : enumClass.getEnumConstants()) {
             boolean hasSql = geoScriptListByPerfil.stream()
-                    .anyMatch(geoScript -> geoScript.getNomeModuloSql().equals(enumValue.name()));
+                    .anyMatch(geoScript -> geoScript.getCodigoSql().equals(getCodeEnum(enumValue))
+                    && geoScript.getCodigoModulo().equals(getModuleEnumCode(enumValue)) );
 
             if (hasSql) {
                 enumsWithSql.add(enumValue);
@@ -135,17 +137,10 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
     }
 
     private void loadAndDisplaySql(Enum<?> enumValue) {
-        String scriptModuleName = enumValue.name();
-        int scriptCode;
+        int moduleCode = getModuleEnumCode(enumValue);
+        int scriptCode = getCodeEnum(enumValue);
 
-        try {
-            Method method = enumValue.getClass().getMethod("getCodigo");
-            scriptCode = (Integer) method.invoke(enumValue);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Erro ao invocar o método getCodigo no Enum: " + enumValue.getClass().getName(), e);
-        }
-
-        SqlEntity geoScript = sqlService.findByPerfilAndNomeModuloSqlAndCodigoSql(perfil, scriptModuleName, scriptCode);
+        SqlEntity geoScript = sqlService.findByPerfilAndCodigoModuloAndCodigoSql(perfil, moduleCode, scriptCode);
         if (geoScript != null) {
             aceEditor.setValue(geoScript.getSql());
             checkBox.setValue(geoScript.getIsPadrao());
@@ -212,42 +207,26 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         }
 
         String sqlToSave = aceEditor.getValue();
-        String scriptModuleName = selectedEnum.name();
-        int scriptCode;
+        int moduleCode = getModuleEnumCode(selectedEnum);
+        int scriptCode = getCodeEnum(selectedEnum);
 
-        try {
-            Method method = selectedEnum.getClass().getMethod("getCodigo");
-            scriptCode = (Integer) method.invoke(selectedEnum);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            showNotification("Erro ao obter o código do Enum.", NotificationVariant.LUMO_ERROR);
-            return;
-        }
-
-        SqlEntity geoScript = sqlService.findByPerfilAndNomeModuloSqlAndCodigoSql(perfil, scriptModuleName, scriptCode);
+        SqlEntity geoScript = sqlService.findByPerfilAndCodigoModuloAndCodigoSql(perfil, moduleCode, scriptCode);
         if (geoScript == null) {
             geoScript = new SqlEntity();
             geoScript.setCodigoSql(scriptCode);
             geoScript.setPerfil(perfil);
-            geoScript.setNomeModuloSql(scriptModuleName);
-            geoScript.setDescricao(getDescription(selectedEnum));
+            geoScript.setCodigoModulo(moduleCode);
+            geoScript.setDescricao(ModuloEnum.getByCodigo(moduleCode).getDescricao() + " - " + getDescription(selectedEnum));
         }
 
         saveGeoScript(geoScript, sqlToSave, checkBox.getValue());
     }
 
     private void deleteCurrentSql() {
-        String scriptModuleName = selectedEnum.name();
-        int scriptCode;
+        int moduleCode = getModuleEnumCode(selectedEnum);
+        int scriptCode = getCodeEnum(selectedEnum);
 
-        try {
-            Method method = selectedEnum.getClass().getMethod("getCodigo");
-            scriptCode = (Integer) method.invoke(selectedEnum);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            showNotification("Erro ao obter o código do Enum.", NotificationVariant.LUMO_ERROR);
-            return;
-        }
-
-        SqlEntity geoScript = sqlService.findByPerfilAndNomeModuloSqlAndCodigoSql(perfil, scriptModuleName, scriptCode);
+        SqlEntity geoScript = sqlService.findByPerfilAndCodigoModuloAndCodigoSql(perfil, moduleCode, scriptCode);
         if (geoScript != null) {
             sqlService.remove(geoScript);
             showNotification("SQL excluído com sucesso.", NotificationVariant.LUMO_SUCCESS);
@@ -296,5 +275,25 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         aceEditor.setValue(null);
         checkBox.setValue(false);
         updateListLayout(selectedEnum.getDeclaringClass());
+    }
+
+    private int getCodeEnum(Enum<?> selectedEnum){
+        try {
+            Method method = selectedEnum.getClass().getMethod("getCodigo");
+            return (Integer) method.invoke(selectedEnum);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            showNotification("Erro ao obter o código do Enum.", NotificationVariant.LUMO_ERROR);
+            return -1;
+        }
+    }
+
+    private int getModuleEnumCode(Enum<?> selectedEnum){
+        try {
+            Method method = selectedEnum.getClass().getMethod("getModulo");
+            return (Integer) method.invoke(selectedEnum);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            showNotification("Erro ao obter o código do Enum.", NotificationVariant.LUMO_ERROR);
+            return -1;
+        }
     }
 }

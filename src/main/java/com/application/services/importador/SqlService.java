@@ -2,6 +2,7 @@ package com.application.services.importador;
 
 import com.application.entities.importador.SqlEntity;
 import com.application.entities.importador.PerfilEntity;
+import com.application.enums.importador.ModuloEnum;
 import com.application.repositories.importador.SqlRepository;
 import com.application.services.AbstractService;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,8 @@ public class SqlService extends AbstractService<SqlEntity, SqlRepository>  {
         super(repository);
     }
 
-    public SqlEntity findByPerfilAndNomeModuloSqlAndCodigoSql(PerfilEntity perfil, String scriptModuleName, int scriptCode) {
-        return repository.findByPerfilAndNomeModuloSqlAndCodigoSql(perfil, scriptModuleName, scriptCode);
+    public SqlEntity findByPerfilAndCodigoModuloAndCodigoSql(PerfilEntity perfil, Integer codigoModule, Integer scriptCode) {
+        return repository.findByPerfilAndCodigoModuloAndCodigoSql(perfil, codigoModule, scriptCode);
     }
 
     public List<SqlEntity> findByPerfil(PerfilEntity perfil) {

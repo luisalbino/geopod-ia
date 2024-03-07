@@ -61,4 +61,7 @@ public enum B2bSqlEnum {
     public String getDescricao() {
         return descricao;
     }
+
+    public int getModulo() {return ModuloEnum.B2B.getCodigo();}
+
 }

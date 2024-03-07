@@ -37,4 +37,7 @@ public enum CrmSqlEnum {
     public String getDescricao() {
         return descricao;
     }
+
+    public int getModulo() {return ModuloEnum.CRM.getCodigo();}
+
 }

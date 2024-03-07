@@ -58,4 +58,7 @@ public enum AnalyticsSqlEnum {
     public String getDescricao() {
         return descricao;
     }
+
+    public int getModulo() {return ModuloEnum.ANALYTICS.getCodigo();}
+
 }
