@@ -1,5 +1,6 @@
 package com.application.components.importador;
 
+import com.application.components.customizado.CustomConfirmDialog;
 import com.application.entities.importador.AbstractImportadorEntity;
 import com.application.helpers.interfaces.RunnableWithParameter;
 import com.application.services.AbstractService;
@@ -22,11 +23,16 @@ public abstract class AbstractConsulta<S extends AbstractService<E, ?>, E extend
     private final ComboBox<E> campoFiltroDescricao = new ComboBox<>("Filtro");
 
     private final RunnableWithParameter<E> onEditarItem;
+    private final CustomConfirmDialog<E> confirmaExclusao;
 
     protected AbstractConsulta(S service, RunnableWithParameter<E> onEditarItem) {
         this.service = service;
         this.onEditarItem = onEditarItem;
         this.dados = this.service.getAll();
+        this.confirmaExclusao = new CustomConfirmDialog<E>("Excluir!", "Deseja realmente excluir o registro?", entidade -> {
+            service.remove(entidade);
+            atualizarDados();
+        });
 
         configFiltros();
         configTabelaDados();
@@ -46,7 +52,8 @@ public abstract class AbstractConsulta<S extends AbstractService<E, ?>, E extend
         grid.addColumn(E::getId).setHeader("Id");
         grid.addColumn(E::getDescricao).setHeader("Descrição");
         grid.setItems(this.dados);
-        add(grid);
+
+        add(grid, confirmaExclusao);
     }
 
     private Component getColunaAcao(E entidade) {
@@ -56,10 +63,7 @@ public abstract class AbstractConsulta<S extends AbstractService<E, ?>, E extend
 
         var botaoExcluir = new Button(VaadinIcon.TRASH.create());
         botaoExcluir.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        botaoExcluir.addClickListener(click -> {
-           service.remove(entidade);
-           atualizarDados();
-        });
+        botaoExcluir.addClickListener(click -> confirmaExclusao.open(entidade));
 
         return new HorizontalLayout(botaoEditar, botaoExcluir);
     }
