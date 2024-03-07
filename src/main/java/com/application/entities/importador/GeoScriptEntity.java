@@ -1,7 +1,7 @@
 package com.application.entities.importador;
 
-import com.application.enums.GeoAnalyticsScriptEnum;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 

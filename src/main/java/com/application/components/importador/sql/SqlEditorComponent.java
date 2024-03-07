@@ -5,6 +5,7 @@ import com.application.entities.importador.PerfilEntity;
 import com.application.services.importador.SqlService;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -19,13 +20,19 @@ import de.f0rce.ace.enums.AceTheme;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
 
     private AceEditor aceEditor;
     private HorizontalLayout selectedLayout;
+
+    private VerticalLayout listLayout = new VerticalLayout();
     private final SqlService sqlService;
     private final PerfilEntity perfil;
     private T selectedEnum;
@@ -44,8 +51,10 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         HorizontalLayout mainLayout = new HorizontalLayout();
         mainLayout.setSizeFull();
 
-        VerticalLayout listLayout = createListLayout(enumClass);
         listLayout.setWidth("25%");
+        listLayout.getStyle().set("overflow-y", "auto");
+
+        updateListLayout(enumClass);
 
         VerticalLayout editorLayout = createEditorLayout();
         editorLayout.setWidth("75%");
@@ -54,29 +63,50 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         add(mainLayout);
     }
 
-    private VerticalLayout createListLayout(Class<T> enumClass) {
-        VerticalLayout listLayout = new VerticalLayout();
-        listLayout.setSizeFull();
+    private void updateListLayout(Class<T> enumClass) {
+        listLayout.removeAll();
         listLayout.getStyle().set("overflow-y", "auto");
 
-        T[] enumConstants = enumClass.getEnumConstants();
-        Arrays.sort(enumConstants, Comparator.comparing(Enum::name));
+        List<GeoScriptEntity> geoScriptListByPerfil = sqlService.findByPerfil(perfil);
 
-        for (int i = 0; i < enumConstants.length; i++) {
-            T enumValue = enumConstants[i];
-            listLayout.add(createItemLayout(enumValue, i));
+        List<T> enumsWithSql = new ArrayList<>();
+        List<T> enumsWithoutSql = new ArrayList<>();
+
+        for (T enumValue : enumClass.getEnumConstants()) {
+            boolean hasSql = geoScriptListByPerfil.stream()
+                    .anyMatch(geoScript -> geoScript.getScriptModuleName().equals(enumValue.name()));
+
+            if (hasSql) {
+                enumsWithSql.add(enumValue);
+            } else {
+                enumsWithoutSql.add(enumValue);
+            }
         }
 
-        return listLayout;
+        enumsWithSql.sort(Comparator.comparing(Enum::name));
+        enumsWithoutSql.sort(Comparator.comparing(Enum::name));
+
+        List<T> orderedEnums = Stream.concat(enumsWithSql.stream(), enumsWithoutSql.stream())
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < orderedEnums.size(); i++) {
+            T enumValue = orderedEnums.get(i);
+            boolean hasSql = enumsWithSql.contains(enumValue);
+            listLayout.add(createItemLayout(enumValue, i, hasSql));
+        }
     }
 
-    private HorizontalLayout createItemLayout(T enumValue, int index) {
+    private HorizontalLayout createItemLayout(T enumValue, int index, boolean hasSql) {
         HorizontalLayout itemLayout = new HorizontalLayout();
         itemLayout.setWidthFull();
         itemLayout.setPadding(false);
         itemLayout.setSpacing(false);
 
         Span span = new Span(getDescription(enumValue));
+        if (hasSql) {
+            span.getStyle()
+                    .set("color", "green");
+        }
         itemLayout.add(span);
         itemLayout.setFlexGrow(1, span);
         itemLayout.getStyle().set("cursor", "pointer").set("padding", "5px");
@@ -130,28 +160,40 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         VerticalLayout editorLayout = new VerticalLayout();
         editorLayout.setSizeFull();
 
-        HorizontalLayout controlsLayout = new HorizontalLayout();
-        controlsLayout.setWidthFull();
-        controlsLayout.setAlignItems(FlexComponent.Alignment.END);
+        HorizontalLayout buttonsLayout = new HorizontalLayout();
+        buttonsLayout.setWidthFull();
+        buttonsLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
+        Button btnSave = new Button("Salvar", event -> saveCurrentSql());
+        btnSave.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        Button btnDelete = new Button("Excluir", event -> showDeleteConfirmation());
+        btnDelete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+        buttonsLayout.add(btnSave);
+        buttonsLayout.add(btnDelete);
+
+        HorizontalLayout checkboxLayout = new HorizontalLayout();
         checkBox = new Checkbox("Padrão");
+        checkboxLayout.add(checkBox);
+        checkboxLayout.setWidthFull();
+        checkboxLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
+
+        VerticalLayout combinedControlsLayout = new VerticalLayout();
+        combinedControlsLayout.add(buttonsLayout, checkboxLayout);
+        combinedControlsLayout.setWidthFull();
 
         aceEditor = new AceEditor();
         aceEditor.setSizeFull();
         aceEditor.setTheme(AceTheme.twilight);
         aceEditor.setMode(AceMode.sql);
-        aceEditor.setPlaceholder("Escreva seu SQL aqui...");
+        aceEditor.setPlaceholder("Desenvolva seu SQL aqui...");
 
-        Button btnSave = new Button("Salvar", event -> saveCurrentSql());
-        btnSave.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
-        controlsLayout.add(btnSave, checkBox);
-        controlsLayout.setFlexGrow(1, aceEditor);
-
-        editorLayout.add(controlsLayout, aceEditor);
+        editorLayout.add(combinedControlsLayout, aceEditor);
 
         return editorLayout;
     }
+
 
     private String getDescription(T enumValue) {
         try {
@@ -190,15 +232,70 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
             geoScript.setScriptModuleName(scriptModuleName);
             geoScript.setDescricao(getDescription(selectedEnum));
         }
-        geoScript.setSql(sqlToSave);
-        geoScript.setIsStandard(checkBox.getValue());
 
-        sqlService.save(geoScript);
-        showNotification("[" + geoScript.getDescricao() + " ] - Salvo com sucesso.", NotificationVariant.LUMO_SUCCESS);
+        saveGeoScript(geoScript, sqlToSave, checkBox.getValue());
+    }
+
+    private void deleteCurrentSql() {
+        String scriptModuleName = selectedEnum.name();
+        int scriptCode;
+
+        try {
+            Method method = selectedEnum.getClass().getMethod("getValue");
+            scriptCode = (Integer) method.invoke(selectedEnum);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            showNotification("Erro ao obter o código do Enum.", NotificationVariant.LUMO_ERROR);
+            return;
+        }
+
+        GeoScriptEntity geoScript = sqlService.findByPerfilAndScriptModuleNameAndScriptCode(perfil, scriptModuleName, scriptCode);
+        if (geoScript != null) {
+            sqlService.remove(geoScript);
+            showNotification("SQL excluído com sucesso.", NotificationVariant.LUMO_SUCCESS);
+            updateListLayout(selectedEnum.getDeclaringClass());
+        } else {
+            showNotification("SQL não encontrado.", NotificationVariant.LUMO_ERROR);
+        }
+        postActionCleanup();
+    }
+
+    private void showDeleteConfirmation() {
+        if (selectedEnum == null) {
+            showNotification("Selecione um Enum primeiro.", NotificationVariant.LUMO_ERROR);
+            return;
+        }
+
+        Dialog confirmationDialog = new Dialog();
+        confirmationDialog.setCloseOnEsc(false);
+        confirmationDialog.setCloseOnOutsideClick(false);
+
+        Button confirmButton = new Button("Confirmar", event -> {
+            deleteCurrentSql();
+            confirmationDialog.close();
+        });
+        confirmButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        Button cancelButton = new Button("Cancelar", event -> confirmationDialog.close());
+        confirmationDialog.add(new Span("Tem certeza que deseja excluir o SQL?"), new HorizontalLayout(confirmButton, cancelButton));
+
+        confirmationDialog.open();
     }
 
     private void showNotification(String message, NotificationVariant variant) {
-        Notification.show(message, 5000, Notification.Position.TOP_CENTER)
-                .addThemeVariants(variant);
+        Notification.show(message, 5000, Notification.Position.TOP_CENTER).addThemeVariants(variant);
+    }
+
+    private void saveGeoScript(GeoScriptEntity geoScript, String sql, boolean isStandard) {
+        geoScript.setSql(sql);
+        geoScript.setIsStandard(isStandard);
+        sqlService.save(geoScript);
+        showNotification("[" + geoScript.getDescricao() + " ] - Salvo com sucesso.", NotificationVariant.LUMO_SUCCESS);
+        postActionCleanup();
+    }
+
+    private void postActionCleanup() {
+        aceEditor.setValue(null);
+        checkBox.setValue(false);
+        updateListLayout(selectedEnum.getDeclaringClass());
     }
 }
