@@ -1,5 +1,8 @@
 package com.application.controllers;
 
+import com.application.entities.importador.PerfilEntity;
+import com.application.models.controller.ResponseModel;
+import com.application.services.importador.PerfilService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,16 +11,22 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class PerfilController {
 
+    private final PerfilService perfilService;
+
+    public PerfilController(PerfilService perfilService) {
+        this.perfilService = perfilService;
+    }
+
     /*
     * Método para listar todos os perfis
     */
-    @GetMapping("/list")
-    public ResponseEntity<?> getPerfilList() {
+    @GetMapping("/all")
+    public ResponseEntity<ResponseModel<PerfilEntity>> getAll() {
         try {
-            return ResponseEntity.ok("ok");
+            return ResponseEntity.ok(new ResponseModel<>(HttpStatus.OK.value(), "", perfilService.getAll()));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro interno.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseModel<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "", null));
         }
     }
 
