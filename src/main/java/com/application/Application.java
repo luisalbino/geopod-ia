@@ -20,13 +20,6 @@ import org.springframework.core.env.Environment;
 @Theme(value = "geopod-ia")
 public class Application implements AppShellConfigurator {
 
-    public static String SECRET;
-
-    public Application(Environment env) {
-        SECRET = env.getProperty("autenticacao.secret");
-    }
-
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
