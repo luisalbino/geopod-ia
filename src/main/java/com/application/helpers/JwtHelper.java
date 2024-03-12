@@ -1,9 +1,11 @@
 package com.application.helpers;
 
+import com.application.Application;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +16,12 @@ import java.util.Date;
 
 public class JwtHelper {
 
-    private static final String secretString = "aQw!2Dx#8fG@9pTkL5yS&bE$3jF*mV7n";
-
     public static String generateToken(String username) {
 
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
 
-        byte[] apiKeySecretBytes = Base64.getEncoder().encode(secretString.getBytes());
+        byte[] apiKeySecretBytes = Base64.getEncoder().encode(Application.SECRET.getBytes());
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
 
         return Jwts.builder()
