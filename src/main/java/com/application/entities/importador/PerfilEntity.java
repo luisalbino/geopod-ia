@@ -7,13 +7,12 @@ import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity(name = "perfis")
-public class PerfilEntity extends AbstractImportadorEntity implements Serializable {
+public class PerfilEntity extends AbstractImportadorEntity {
 
     @ManyToOne
     @JoinColumn(name = "ramo_id", nullable = false)

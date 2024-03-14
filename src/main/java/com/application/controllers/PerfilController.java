@@ -2,10 +2,13 @@ package com.application.controllers;
 
 import com.application.entities.importador.PerfilEntity;
 import com.application.models.controller.ResponseModel;
+import com.application.models.importador.PerfilModel;
 import com.application.services.importador.PerfilService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @RequestMapping("/api/perfil")
 @RestController
@@ -21,9 +24,9 @@ public class PerfilController {
     * Método para listar todos os perfis
     */
     @GetMapping("/all")
-    public ResponseEntity<ResponseModel<PerfilEntity>> getAll() {
+    public ResponseEntity<ResponseModel<PerfilModel>> getAll() {
         try {
-            return ResponseEntity.ok(new ResponseModel<>(HttpStatus.OK.value(), "", perfilService.getAll()));
+            return ResponseEntity.ok(new ResponseModel<>(HttpStatus.OK.value(), "", perfilService.getModels()));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseModel<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "", null));

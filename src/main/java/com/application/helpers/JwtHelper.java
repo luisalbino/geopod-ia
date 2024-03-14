@@ -1,22 +1,17 @@
 package com.application.helpers;
 
 import com.application.config.ApplicationProperties;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 
 public class JwtHelper {
 
+    private final static Long UMA_HORA_EM_MILLIS = 3600000L;
     private final HttpServletRequest request;
 
     private String username = "";
@@ -38,7 +33,7 @@ public class JwtHelper {
                 .setSubject(this.username)
                 .claim("nome", this.username)
                 .setIssuedAt(now)
-                .setExpiration(new Date(nowMillis + 3600000)) // expira em 1 hora
+                .setExpiration(new Date(nowMillis + UMA_HORA_EM_MILLIS)) // expira em 1 hora
                 .signWith(SignatureAlgorithm.HS256, this.secret)
                 .compact();
 
