@@ -29,19 +29,18 @@ public class JwtHelper {
         secret = applicationProperties.getAutenticacaoSecret();
     }
 
-    public String generateToken() {
+    public String generateToken() throws Exception {
 
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
 
-        byte[] apiKeySecretBytes = Base64.getEncoder().encode(this.secret.getBytes());
-        Key signingKey = new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
-
         String token = Jwts.builder()
                 .setSubject(this.username)
+                .claim("nome", this.username)
                 .setIssuedAt(now)
-                .setExpiration(new Date(nowMillis + 3600000)) // expira em 1 hora
-                .signWith(SignatureAlgorithm.HS256, signingKey)
+                //.setExpiration(new Date(nowMillis + 3600000)) // expira em 1 hora
+                .setExpiration(new Date(nowMillis + 60000)) // expira em 1 minuto
+                .signWith(SignatureAlgorithm.HS256, this.secret)
                 .compact();
 
         HttpSession session = this.request.getSession();
@@ -50,13 +49,9 @@ public class JwtHelper {
         return token;
     }
 
-    public boolean tokenIsValid(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(this.secret.getBytes())
-                .parseClaimsJws(token.strip())
-                .getBody();
-
-        Date expirationDate = claims.getExpiration();
-        return expirationDate != null && expirationDate.after(new Date());
+    public boolean tokenIsValid(String token) throws Exception {
+        Claims claims = Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody();
+        Date dataExpiracao = claims.getExpiration();
+        return !dataExpiracao.before(new Date());
     }
 }
