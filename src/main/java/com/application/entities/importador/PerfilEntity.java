@@ -7,6 +7,7 @@ import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -27,5 +28,5 @@ public class PerfilEntity extends AbstractImportadorEntity {
     private BancoDeDadosEntity bancoDeDados;
 
     @OneToMany(mappedBy = "perfil")
-    private List<SqlEntity> geoScriptEntities;
+    private Collection<SqlEntity> sqls;
 }

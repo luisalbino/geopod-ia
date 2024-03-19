@@ -2,11 +2,13 @@ package com.application.services.importador;
 
 import com.application.entities.importador.PerfilEntity;
 import com.application.models.importador.PerfilModel;
+import com.application.models.importador.SQLModel;
 import com.application.repositories.importador.PerfilRepository;
 import com.application.services.AbstractService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,10 +25,26 @@ public class PerfilService extends AbstractService<PerfilEntity, PerfilRepositor
 
         var perfis = this.getAll();
         for (var perfil : perfis) {
-            resultado.add(PerfilModel.builder()
-                    .id(perfil.getId())
-                    .descricao(perfil.getDescricao())
-                    .build());
+            if (CollectionUtils.isNotEmpty(perfil.getSqls())) {
+                var perfilModel = PerfilModel.builder()
+                        .id(perfil.getId())
+                        .descricao(perfil.getDescricao())
+                        .sqls(new ArrayList<>())
+                        .build();
+
+                for (var sql : perfil.getSqls()) {
+                    perfilModel.getSqls().add(SQLModel
+                            .builder()
+                            .codigoSql(sql.getCodigoSql())
+                            .codigoModulo(sql.getCodigoModulo())
+                            .sql(sql.getSql())
+                            .isPadrao(sql.getIsPadrao())
+                            .build());
+
+                }
+
+                resultado.add(perfilModel);
+            }
         }
 
         return resultado;
