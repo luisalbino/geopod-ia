@@ -1,34 +1,51 @@
 package com.application.helpers;
 
-import com.application.Application;
+import com.application.config.ApplicationProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
-import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 
 public class JwtHelper {
 
-    public static String generateToken(String username) {
+    private final static Long UMA_HORA_EM_MILLIS = 3600000L;
+    private final HttpServletRequest request;
+
+    private String username = "";
+    private String secret = "";
+
+    public JwtHelper(ApplicationProperties applicationProperties, HttpServletRequest request) {
+        this.request = request;
+
+        username = applicationProperties.getUsuarioLogin();
+        secret = applicationProperties.getAutenticacaoSecret();
+    }
+
+    public String generateToken() throws Exception {
 
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
 
-        byte[] apiKeySecretBytes = Base64.getEncoder().encode(Application.SECRET.getBytes());
-        Key signingKey = new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
-
-        return Jwts.builder()
-                .setSubject(username)
+        String token = Jwts.builder()
+                .setSubject(this.username)
+                .claim("nome", this.username)
                 .setIssuedAt(now)
-                .setExpiration(new Date(nowMillis + 3600000)) // expira em 1 hora
-                .signWith(SignatureAlgorithm.HS256, signingKey)
+                .setExpiration(new Date(nowMillis + UMA_HORA_EM_MILLIS)) // expira em 1 hora
+                .signWith(SignatureAlgorithm.HS256, this.secret)
                 .compact();
+
+        HttpSession session = this.request.getSession();
+        session.setAttribute("geoToken", token);
+
+        return token;
+    }
+
+    public boolean tokenIsValid(String token) throws Exception {
+        Claims claims = Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody();
+        Date dataExpiracao = claims.getExpiration();
+        return !dataExpiracao.before(new Date());
     }
 }
