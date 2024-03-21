@@ -1,6 +1,7 @@
 package com.application.services.importador;
 
 import com.application.entities.importador.PerfilEntity;
+import com.application.enums.importador.ModuloEnum;
 import com.application.models.importador.PerfilModel;
 import com.application.models.importador.SQLModel;
 import com.application.repositories.importador.PerfilRepository;
@@ -8,9 +9,7 @@ import com.application.services.AbstractService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -39,6 +38,7 @@ public class PerfilService extends AbstractService<PerfilEntity, PerfilRepositor
                             .codigoModulo(sql.getCodigoModulo())
                             .sql(sql.getSql())
                             .isPadrao(sql.getIsPadrao())
+                            .descricao(getSQLDescricao(sql.getCodigoModulo(), sql.getCodigoSql()))
                             .build());
 
                 }
@@ -50,4 +50,15 @@ public class PerfilService extends AbstractService<PerfilEntity, PerfilRepositor
         return resultado;
     }
 
+    private String getSQLDescricao(Integer codigoModulo, Integer codigoSQL) {
+        String resultado = null;
+
+        var mapNomes = ModuloEnum.getMapNomeSQL();
+
+        if (mapNomes.containsKey(codigoModulo)) {
+            resultado = mapNomes.get(codigoModulo).get(codigoSQL);
+        }
+
+        return resultado;
+    }
 }

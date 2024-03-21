@@ -11,10 +11,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class SQLModel implements Serializable {
 
+    private String sql;
+    private String descricao;
+
     private Integer codigoSql;
     private Integer codigoModulo;
 
-
-    private String sql;
     private Boolean isPadrao;
 }
