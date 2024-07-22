@@ -9,7 +9,8 @@ public enum ModuloEnum {
     ANALYTICS(10, "Analytics"),
     FORCA_DE_VENDAS(20, "Força de Vendas"),
     B2B(30, "B2B"),
-    CRM(40, "CRM");
+    CRM(40, "CRM"),
+    FORCA_DE_VENDAS_MALHARIA(50, "Força de Vendas - Malharia");
 
     private final int codigo;
     private final String descricao;
@@ -53,6 +54,10 @@ public enum ModuloEnum {
 
         for (var sql : CrmSqlEnum.values()) {
             resultado.get(ModuloEnum.CRM.codigo).put(sql.getCodigo(), sql.getDescricao());
+        }
+
+        for (var sql : ForcaVendasMalhariaSqlEnum.values()) {
+            resultado.get(ModuloEnum.FORCA_DE_VENDAS_MALHARIA.codigo).put(sql.getCodigo(), sql.getDescricao());
         }
 
         return resultado;
