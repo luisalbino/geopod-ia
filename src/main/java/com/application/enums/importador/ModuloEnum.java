@@ -48,11 +48,11 @@ public enum ModuloEnum {
         }
 
         for (var sql : B2bSqlEnum.values()) {
-            resultado.get(ModuloEnum.FORCA_DE_VENDAS.codigo).put(sql.getCodigo(), sql.getDescricao());
+            resultado.get(ModuloEnum.B2B.codigo).put(sql.getCodigo(), sql.getDescricao());
         }
 
         for (var sql : CrmSqlEnum.values()) {
-            resultado.get(ModuloEnum.FORCA_DE_VENDAS.codigo).put(sql.getCodigo(), sql.getDescricao());
+            resultado.get(ModuloEnum.CRM.codigo).put(sql.getCodigo(), sql.getDescricao());
         }
 
         return resultado;
