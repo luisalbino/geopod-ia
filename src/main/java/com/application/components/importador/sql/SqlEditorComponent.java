@@ -4,9 +4,11 @@ import com.application.entities.importador.SqlEntity;
 import com.application.entities.importador.PerfilEntity;
 import com.application.enums.importador.ModuloEnum;
 import com.application.services.importador.SqlService;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -38,11 +40,15 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
     private T selectedEnum;
     private Checkbox checkBox;
     private int selectedIndex = -1;
+    private Html sqlUpdateName = new Html("<b><span>Selecione um SQL!</span><b>");
+    private Div sqlUpdateNameContainer = new Div();
+
 
     public SqlEditorComponent(Class<T> enumClass, SqlService sqlService, PerfilEntity perfil) {
         this.sqlService = sqlService;
         this.perfil = perfil;
         createLayouts(enumClass);
+        sqlUpdateNameContainer.add(sqlUpdateName);
     }
 
     private void createLayouts(Class<T> enumClass) {
@@ -68,7 +74,6 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         listLayout.getStyle().set("overflow-y", "auto");
 
         List<SqlEntity> geoScriptListByPerfil = sqlService.findByPerfil(perfil);
-
         List<T> enumsWithSql = new ArrayList<>();
         List<T> enumsWithoutSql = new ArrayList<>();
 
@@ -139,7 +144,6 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
     private void loadAndDisplaySql(Enum<?> enumValue) {
         int moduleCode = getModuleEnumCode(enumValue);
         int scriptCode = getCodeEnum(enumValue);
-
         SqlEntity geoScript = sqlService.findByPerfilAndCodigoModuloAndCodigoSql(perfil, moduleCode, scriptCode);
         if (geoScript != null) {
             aceEditor.setValue(geoScript.getSql());
@@ -148,6 +152,7 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
             aceEditor.setValue(null);
             checkBox.setValue(false);
         }
+        sqlUpdateName.getElement().setProperty("innerHTML", "<strong><span style=\"color: green; font-size: 20px;\">" + getDescriptionEnum(enumValue) + "</span></strong>");
     }
 
     private VerticalLayout createEditorLayout() {
@@ -165,6 +170,7 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         btnDelete.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
         buttonsLayout.add(btnSave);
+        buttonsLayout.add(sqlUpdateNameContainer);
         buttonsLayout.add(btnDelete);
 
         HorizontalLayout checkboxLayout = new HorizontalLayout();
@@ -199,7 +205,7 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
 
     private void saveCurrentSql() {
         if (selectedEnum == null) {
-            showNotification("Selecione um Enum primeiro.", NotificationVariant.LUMO_ERROR);
+            showNotification("Selecione um Modulo primeiro.", NotificationVariant.LUMO_ERROR);
             return;
         } else if (aceEditor.getValue().isBlank()) {
             showNotification("Informe um SQL primeiro.", NotificationVariant.LUMO_ERROR);
@@ -272,8 +278,6 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
     }
 
     private void postActionCleanup() {
-        aceEditor.setValue(null);
-        checkBox.setValue(false);
         updateListLayout(selectedEnum.getDeclaringClass());
     }
 
@@ -294,6 +298,16 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             showNotification("Erro ao obter o código do Enum.", NotificationVariant.LUMO_ERROR);
             return -1;
+        }
+    }
+
+    private String getDescriptionEnum(Enum<?> selectedEnum){
+        try {
+            Method method = selectedEnum.getClass().getMethod("getDescricao");
+            return (String) method.invoke(selectedEnum);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            showNotification("Erro ao obter o código do Enum.", NotificationVariant.LUMO_ERROR);
+            return "";
         }
     }
 }

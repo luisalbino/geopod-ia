@@ -2,10 +2,7 @@ package com.application.views.importador;
 
 import com.application.components.importador.sql.SqlEditorComponent;
 import com.application.entities.importador.PerfilEntity;
-import com.application.enums.importador.AnalyticsSqlEnum;
-import com.application.enums.importador.B2bSqlEnum;
-import com.application.enums.importador.CrmSqlEnum;
-import com.application.enums.importador.ForcaVendasSqlEnum;
+import com.application.enums.importador.*;
 import com.application.services.importador.PerfilService;
 import com.application.services.importador.SqlService;
 import com.application.views.MainLayout;
@@ -69,6 +66,7 @@ public class SqlView extends SplitLayout {
         tabSheet.add("Força de Vendas", new SqlEditorComponent<>(ForcaVendasSqlEnum.class, sqlService, perfil));
         tabSheet.add("B2B", new SqlEditorComponent<>(B2bSqlEnum.class, sqlService, perfil));
         tabSheet.add("CRM", new SqlEditorComponent<>(CrmSqlEnum.class, sqlService, perfil));
+        tabSheet.add("Força de Vendas - Malharia", new SqlEditorComponent<>(ForcaVendasMalhariaSqlEnum.class, sqlService, perfil));
         tabSheet.setSizeFull();
         VerticalLayout tabSheetLayout = (VerticalLayout) getPrimaryComponent().getChildren().toArray()[1];
         tabSheetLayout.add(tabSheet);
