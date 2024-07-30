@@ -17,16 +17,17 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.button.Button;
 
+import com.vaadin.flow.component.textfield.TextField;
 import de.f0rce.ace.AceEditor;
 import de.f0rce.ace.enums.AceMode;
 import de.f0rce.ace.enums.AceTheme;
+import io.micrometer.common.util.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
@@ -34,20 +35,25 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
     private AceEditor aceEditor;
     private HorizontalLayout selectedLayout;
 
-    private VerticalLayout listLayout = new VerticalLayout();
-    private final SqlService sqlService;
+    private final VerticalLayout listLayout = new VerticalLayout();
+    private final transient SqlService sqlService;
     private final PerfilEntity perfil;
     private T selectedEnum;
     private Checkbox checkBox;
     private int selectedIndex = -1;
-    private Html sqlUpdateName = new Html("<b><span>Selecione um SQL!</span><b>");
-    private Div sqlUpdateNameContainer = new Div();
+    private final Html sqlUpdateName = new Html("<b><span>Selecione um SQL!</span><b>");
+    private final Div sqlUpdateNameContainer = new Div();
 
+    private TextField searchField;
+
+    private List<SqlEntity> geoScriptListByPerfil;
 
     public SqlEditorComponent(Class<T> enumClass, SqlService sqlService, PerfilEntity perfil) {
         this.sqlService = sqlService;
         this.perfil = perfil;
-        createLayouts(enumClass);
+
+        this.loadScripts();
+        this.createLayouts(enumClass);
         sqlUpdateNameContainer.add(sqlUpdateName);
     }
 
@@ -57,15 +63,22 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         HorizontalLayout mainLayout = new HorizontalLayout();
         mainLayout.setSizeFull();
 
-        listLayout.setWidth("25%");
-        listLayout.getStyle().set("overflow-y", "auto");
+        this.searchField = new TextField();
+        this.searchField.setPlaceholder("Busca...");
+        this.searchField.setWidthFull();
+        this.searchField.addValueChangeListener(event -> this.updateListLayout(enumClass));
+
+        VerticalLayout mainListLayout = new VerticalLayout();
+        mainListLayout.add(this.searchField, listLayout);
+        mainListLayout.setWidth("25%");
+        mainListLayout.getStyle().set("overflow-y", "auto");
 
         updateListLayout(enumClass);
 
         VerticalLayout editorLayout = createEditorLayout();
         editorLayout.setWidth("75%");
 
-        mainLayout.add(listLayout, editorLayout);
+        mainLayout.add(mainListLayout, editorLayout);
         add(mainLayout);
     }
 
@@ -73,12 +86,11 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         listLayout.removeAll();
         listLayout.getStyle().set("overflow-y", "auto");
 
-        List<SqlEntity> geoScriptListByPerfil = sqlService.findByPerfil(perfil);
         List<T> enumsWithSql = new ArrayList<>();
         List<T> enumsWithoutSql = new ArrayList<>();
 
         for (T enumValue : enumClass.getEnumConstants()) {
-            boolean hasSql = geoScriptListByPerfil.stream()
+            boolean hasSql = this.geoScriptListByPerfil.stream()
                     .anyMatch(geoScript -> geoScript.getCodigoSql().equals(getCodeEnum(enumValue))
                     && geoScript.getCodigoModulo().equals(getModuleEnumCode(enumValue)) );
 
@@ -92,14 +104,20 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         enumsWithSql.sort(Comparator.comparing(Enum::name));
         enumsWithoutSql.sort(Comparator.comparing(Enum::name));
 
-        List<T> orderedEnums = Stream.concat(enumsWithSql.stream(), enumsWithoutSql.stream())
-                .collect(Collectors.toList());
+        List<T> orderedEnums = Stream.concat(enumsWithSql.stream(), enumsWithoutSql.stream()).toList();
+        if (StringUtils.isNotBlank(this.searchField.getValue())) {
+            orderedEnums = orderedEnums.stream().filter(script -> this.getDescription(script).toLowerCase().contains(this.searchField.getValue().toLowerCase())).toList();
+        }
 
         for (int i = 0; i < orderedEnums.size(); i++) {
             T enumValue = orderedEnums.get(i);
             boolean hasSql = enumsWithSql.contains(enumValue);
             listLayout.add(createItemLayout(enumValue, i, hasSql));
         }
+    }
+
+    private void loadScripts() {
+        this.geoScriptListByPerfil = sqlService.findByPerfil(perfil);
     }
 
     private HorizontalLayout createItemLayout(T enumValue, int index, boolean hasSql) {
@@ -235,12 +253,12 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         SqlEntity geoScript = sqlService.findByPerfilAndCodigoModuloAndCodigoSql(perfil, moduleCode, scriptCode);
         if (geoScript != null) {
             sqlService.remove(geoScript);
+            this.aceEditor.clear();
+            this.postActionCleanup();
             showNotification("SQL excluído com sucesso.", NotificationVariant.LUMO_SUCCESS);
-            updateListLayout(selectedEnum.getDeclaringClass());
         } else {
             showNotification("SQL não encontrado.", NotificationVariant.LUMO_ERROR);
         }
-        postActionCleanup();
     }
 
     private void showDeleteConfirmation() {
@@ -278,6 +296,7 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
     }
 
     private void postActionCleanup() {
+        this.loadScripts();
         updateListLayout(selectedEnum.getDeclaringClass());
     }
 

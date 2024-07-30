@@ -22,10 +22,11 @@ import java.util.Collection;
 @Route(value = "cadastro-sql", layout = MainLayout.class)
 public class SqlView extends SplitLayout {
 
-    private Collection<PerfilEntity> listaPerfis;
-    private final SqlService sqlService;
-    private TabSheet tabSheet;
+    private final transient SqlService sqlService;
+    private final Collection<PerfilEntity> listaPerfis;
+
     private ComboBox<PerfilEntity> comboBoxPerfis;
+    private VerticalLayout tabSheetLayout;
 
     public SqlView(PerfilService perfilService, SqlService sqlService) {
         super();
@@ -53,14 +54,21 @@ public class SqlView extends SplitLayout {
 
     private Component getBody() {
         VerticalLayout bodyLayout = new VerticalLayout();
-        VerticalLayout tabSheetLayout = new VerticalLayout();
-        tabSheetLayout.setSizeFull();
-        bodyLayout.add(comboBoxPerfis, tabSheetLayout);
+        bodyLayout.add(comboBoxPerfis, this.getTabSheet());
         return bodyLayout;
     }
 
+    private Component getTabSheet() {
+        this.tabSheetLayout = new VerticalLayout();
+        this.tabSheetLayout.setSizeFull();
+
+        return this.tabSheetLayout;
+    }
+
     private void loadTabSheet(PerfilEntity perfil) {
+        TabSheet tabSheet;
         clearTabSheet();
+
         tabSheet = new TabSheet();
         tabSheet.add("Analytics", new SqlEditorComponent<>(AnalyticsSqlEnum.class, sqlService, perfil));
         tabSheet.add("Força de Vendas", new SqlEditorComponent<>(ForcaVendasSqlEnum.class, sqlService, perfil));
@@ -68,15 +76,11 @@ public class SqlView extends SplitLayout {
         tabSheet.add("CRM", new SqlEditorComponent<>(CrmSqlEnum.class, sqlService, perfil));
         tabSheet.add("Força de Vendas - Malharia", new SqlEditorComponent<>(ForcaVendasMalhariaSqlEnum.class, sqlService, perfil));
         tabSheet.setSizeFull();
-        VerticalLayout tabSheetLayout = (VerticalLayout) getPrimaryComponent().getChildren().toArray()[1];
-        tabSheetLayout.add(tabSheet);
+
+        this.tabSheetLayout.add(tabSheet);
     }
 
     private void clearTabSheet() {
-        if (tabSheet != null) {
-            VerticalLayout tabSheetLayout = (VerticalLayout) getPrimaryComponent().getChildren().toArray()[1];
-            tabSheetLayout.remove(tabSheet);
-            tabSheet = null;
-        }
+        this.tabSheetLayout.removeAll();
     }
 }
