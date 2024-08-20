@@ -1,15 +1,18 @@
 package com.application.components.importador.sql;
 
-import com.application.entities.importador.SqlEntity;
 import com.application.entities.importador.PerfilEntity;
+import com.application.entities.importador.SqlEntity;
 import com.application.enums.importador.ModuloEnum;
 import com.application.services.importador.SqlService;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -28,6 +31,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
@@ -87,18 +92,23 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         listLayout.getStyle().set("overflow-y", "auto");
 
         List<T> enumsWithSql = new ArrayList<>();
+        List<T> enumsPadroes = new ArrayList<>();
         List<T> enumsWithoutSql = new ArrayList<>();
 
         for (T enumValue : enumClass.getEnumConstants()) {
-            boolean hasSql = this.geoScriptListByPerfil.stream()
-                    .anyMatch(geoScript -> geoScript.getCodigoSql().equals(getCodeEnum(enumValue))
-                    && geoScript.getCodigoModulo().equals(getModuleEnumCode(enumValue)) );
+            var sql = this.geoScriptListByPerfil.stream()
+                    .filter(geoScript -> geoScript.getCodigoSql().equals(getCodeEnum(enumValue)) && geoScript.getCodigoModulo().equals(getModuleEnumCode(enumValue)))
+                    .findFirst()
+                    .orElse(null);
 
-            if (hasSql) {
+            if (Objects.nonNull(sql)) {
                 enumsWithSql.add(enumValue);
+                if (sql.getIsPadrao()) enumsPadroes.add(enumValue);
             } else {
                 enumsWithoutSql.add(enumValue);
             }
+
+
         }
 
         enumsWithSql.sort(Comparator.comparing(Enum::name));
@@ -112,7 +122,8 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         for (int i = 0; i < orderedEnums.size(); i++) {
             T enumValue = orderedEnums.get(i);
             boolean hasSql = enumsWithSql.contains(enumValue);
-            listLayout.add(createItemLayout(enumValue, i, hasSql));
+            boolean isSQLPadrao = enumsPadroes.contains(enumValue);
+            listLayout.add(createItemLayout(enumValue, i, hasSql, isSQLPadrao));
         }
     }
 
@@ -120,7 +131,7 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         this.geoScriptListByPerfil = sqlService.findByPerfil(perfil);
     }
 
-    private HorizontalLayout createItemLayout(T enumValue, int index, boolean hasSql) {
+    private HorizontalLayout createItemLayout(T enumValue, int index, boolean hasSql, boolean isSQLPadrao) {
         HorizontalLayout itemLayout = new HorizontalLayout();
         itemLayout.setWidthFull();
         itemLayout.setPadding(false);
@@ -132,6 +143,11 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
                     .set("color", "green");
         }
         itemLayout.add(span);
+
+        if (isSQLPadrao) {
+            itemLayout.add(VaadinIcon.STAR.create());
+        }
+
         itemLayout.setFlexGrow(1, span);
         itemLayout.getStyle().set("cursor", "pointer").set("padding", "5px");
 
