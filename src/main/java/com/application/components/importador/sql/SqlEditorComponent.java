@@ -7,6 +7,7 @@ import com.application.services.importador.SqlService;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.charts.model.style.Color;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
@@ -145,7 +146,9 @@ public class SqlEditorComponent<T extends Enum<T>> extends VerticalLayout {
         itemLayout.add(span);
 
         if (isSQLPadrao) {
-            itemLayout.add(VaadinIcon.STAR.create());
+            Icon estrela = VaadinIcon.STAR.create();
+            estrela.setColor("#006AF5");
+            itemLayout.add(estrela);
         }
 
         itemLayout.setFlexGrow(1, span);
