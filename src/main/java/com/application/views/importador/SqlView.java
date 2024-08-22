@@ -40,6 +40,7 @@ public class SqlView extends SplitLayout {
 
     private void initializeComponents() {
         comboBoxPerfis = new ComboBox<>("Selecione um Perfil");
+        comboBoxPerfis.setWidthFull();
         comboBoxPerfis.setItems(listaPerfis);
         comboBoxPerfis.setItemLabelGenerator(PerfilEntity::getDescricao);
 
